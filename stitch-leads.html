@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MarketPro Admin - Leads</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#ff8cbc",
+                    "primary": "#bd9dff",
+                    "tertiary": "#ff6daf",
+                    "secondary-dim": "#40ceed",
+                    "inverse-primary": "#742fe5",
+                    "inverse-on-surface": "#545367",
+                    "on-secondary": "#004b58",
+                    "secondary-fixed": "#65e1ff",
+                    "on-tertiary-fixed-variant": "#740044",
+                    "on-primary-fixed-variant": "#390083",
+                    "error": "#ff6e84",
+                    "surface-container-low": "#111124",
+                    "outline": "#757388",
+                    "surface-dim": "#0c0c1d",
+                    "tertiary-container": "#fa53a4",
+                    "on-primary-fixed": "#000000",
+                    "on-surface": "#e6e3fb",
+                    "tertiary-fixed-dim": "#ff73b1",
+                    "surface-bright": "#2a2a43",
+                    "primary-fixed": "#b28cff",
+                    "on-surface-variant": "#aba9bf",
+                    "background": "#0c0c1d",
+                    "primary-fixed-dim": "#a67aff",
+                    "on-error-container": "#ffb2b9",
+                    "on-tertiary-fixed": "#37001d",
+                    "surface-container-lowest": "#000000",
+                    "primary-container": "#b28cff",
+                    "primary-dim": "#8a4cfc",
+                    "outline-variant": "#474659",
+                    "surface-container-highest": "#23233b",
+                    "secondary-fixed-dim": "#48d4f3",
+                    "on-primary-container": "#2e006c",
+                    "surface-tint": "#bd9dff",
+                    "tertiary-dim": "#ff67ad",
+                    "on-tertiary-container": "#2f0018",
+                    "on-secondary-fixed-variant": "#005969",
+                    "surface-variant": "#23233b",
+                    "surface-container": "#18182b",
+                    "secondary": "#53ddfc",
+                    "surface-container-high": "#1d1d33",
+                    "on-tertiary": "#4b002a",
+                    "error-container": "#a70138",
+                    "inverse-surface": "#fcf8ff",
+                    "on-secondary-fixed": "#003a45",
+                    "on-primary": "#3c0089",
+                    "secondary-container": "#00687a",
+                    "on-error": "#490013",
+                    "on-background": "#e6e3fb",
+                    "error-dim": "#d73357",
+                    "surface": "#0c0c1d",
+                    "on-secondary-container": "#ecfaff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {},
+            "fontFamily": {
+                    "headline": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body": [
+                            "Inter"
+                    ],
+                    "label": [
+                            "Inter"
+                    ]
+            }
+        },
+        },
+      }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(32px);
+            border: 1px solid rgba(71, 70, 89, 0.15); /* outline-variant at 15% */
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #bd9dff, #ff6daf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .ambient-shadow {
+            box-shadow: 0 0 60px rgba(138, 76, 252, 0.08); /* primary-dim at 8% */
+        }
+        .orb-1 {
+            background: radial-gradient(circle, rgba(64, 206, 237, 0.2) 0%, rgba(12, 12, 29, 0) 70%); /* secondary-dim */
+        }
+        .orb-2 {
+            background: radial-gradient(circle, rgba(250, 83, 164, 0.15) 0%, rgba(12, 12, 29, 0) 70%); /* tertiary-container */
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body overflow-x-hidden min-h-screen">
+<!-- Liquid Light Orbs (Background) -->
+<div class="fixed top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full orb-1 pointer-events-none z-0"></div>
+<div class="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full orb-2 pointer-events-none z-0"></div>
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 bottom-0 z-40 flex flex-col w-[240px] h-screen border-r border-white/10 bg-white/5 dark:bg-[#0c0c1d]/40 backdrop-blur-xl shadow-[0_0_40px_rgba(124,58,237,0.08)]">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" data-icon="rocket_launch">rocket_launch</span>
+</div>
+<div>
+<h1 class="text-xl font-bold tracking-tighter text-white font-headline">MarketPro</h1>
+<p class="text-xs text-on-surface-variant font-label">Admin Console</p>
+</div>
+</div>
+<ul class="space-y-2 font-['Plus_Jakarta_Sans'] text-sm font-medium">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span>Field Visits</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Sales</span>
+</a>
+</li>
+<li>
+<!-- Active State -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg relative text-white font-bold before:absolute before:left-0 before:h-full before:w-1 before:bg-[#7C3AED] before:shadow-[4px_0_12px_rgba(124,58,237,0.5)] bg-white/5 hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="group_add" data-weight="fill" style="font-variation-settings: 'FILL' 1;">group_add</span>
+<span>Leads</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span>Employees</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>Reports</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="manage_accounts">manage_accounts</span>
+<span>User Management</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-[240px] z-30 flex justify-between items-center px-6 h-16 border-b border-white/10 bg-white/5 dark:bg-[#0c0c1d]/30 backdrop-blur-xl font-['Plus_Jakarta_Sans'] text-sm transition-all duration-300 ease-in-out">
+<div class="flex-1 flex items-center">
+<div class="relative w-64 glass-panel rounded-full overflow-hidden flex items-center px-3 py-1.5 focus-within:ring-1 focus-within:ring-secondary transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-lg mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full text-on-surface placeholder-on-surface-variant outline-none font-body" placeholder="Search leads..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/30 ml-2">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Close up portrait of a professional man in a dark suit against a studio background, soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGHH8F_Yoww1_Iavb-_SsD7TRsMD2SypVlBe1GVlCDyEw5jSrZk7_Z-7irIyG4VoIcHB3e_7lDc3JRn3mYbX1Ru6QVAIpgEauOQ8cJxjz7DRMzryWsLXbXE0LXtpIOFIkgzMgB9u9BwBoazVlaoHfMZNJ_aWHZ81_XZ0Tu-470I37ZVovEc7noTqrv_OM8FK4Q0STBY5h0gjrdZ8WfbJub7GCx3TrZueBIH7ey4kiPG2HoBs6af_w88zZNhJ3nfBZDTBTGxT_fx0c"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[240px] pt-24 px-8 pb-12 relative z-10 min-h-screen">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="text-3xl font-headline font-bold text-on-surface mb-2">Lead Pipeline</h2>
+<p class="text-on-surface-variant font-body text-sm max-w-xl">Track and manage prospective clients through the sales cycle. High priority targets are highlighted.</p>
+</div>
+<button class="px-5 py-2.5 rounded-full bg-gradient-to-br from-primary to-secondary text-surface-container-lowest font-headline font-semibold text-sm hover:shadow-[0_0_20px_rgba(189,157,255,0.4)] transition-all duration-300 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+                New Lead
+            </button>
+</div>
+<!-- Kanban Board -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-220px)] overflow-hidden">
+<!-- Column 1: Leads -->
+<div class="flex flex-col bg-surface-container-low rounded-[2rem] p-4 glass-panel ambient-shadow h-full">
+<div class="flex items-center justify-between mb-4 px-2">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-secondary-dim shadow-[0_0_10px_rgba(64,206,237,0.5)]"></div>
+<h3 class="font-headline font-bold text-on-surface text-lg">Inbound Leads</h3>
+</div>
+<span class="bg-surface-variant text-on-surface-variant text-xs font-bold font-mono px-2.5 py-1 rounded-full">24</span>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 space-y-4 pb-4 custom-scrollbar">
+<!-- Card 1 -->
+<div class="bg-surface-container-high rounded-xl p-5 border border-outline-variant/20 hover:border-secondary-dim/50 transition-colors cursor-grab relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary-dim opacity-50 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-headline font-bold text-on-surface">Acme Corp Global</h4>
+<span class="text-xs font-mono text-on-surface-variant">2h ago</span>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<div class="w-6 h-6 rounded-full bg-primary-container/20 flex items-center justify-center border border-primary/30">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="person">person</span>
+</div>
+<span class="text-sm text-on-surface-variant font-body">Sarah Jenkins, VP Growth</span>
+</div>
+<p class="text-xs text-on-surface-variant font-body mb-4 line-clamp-2 italic">Requested a demo regarding enterprise features. specifically interested in API integration...</p>
+<div class="flex justify-between items-center pt-3 border-t border-white/5">
+<div class="flex -space-x-2">
+<img alt="Agent" class="w-6 h-6 rounded-full border border-surface-container-high z-10" data-alt="Portrait of young woman with dark hair in professional setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOOb5W6DPpXShUU2P5CByrEKy1Ies5NRyGs2E_SblHOHKjwUg6tld1sR5V0fEvA9gVgvLIrlolWEwkY-4-gHAZNl2fcY3qlPpnoEcKS-h35QbxEYKJQT_H61Qc5h1IEgNu9rBFoguGjaQ23tfTb1sLlhJdt_NwuBj4JfehT0f4IitzRqOp4z-1p8lIbBH_2nefY82yjCZOQWdb2HC-a-Qo9zHuNsvA3W9BpEPJNlnej4J109yvKFfUL-XinbQB8fb2sEhR57OhhRc"/>
+</div>
+<span class="text-xs font-medium text-secondary-dim flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span> Follow up today
+                            </span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-high rounded-xl p-5 border border-outline-variant/20 hover:border-secondary-dim/50 transition-colors cursor-grab relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-surface-variant group-hover:bg-secondary-dim/50 transition-colors"></div>
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-headline font-bold text-on-surface">Nexus Technologies</h4>
+<span class="text-xs font-mono text-on-surface-variant">1d ago</span>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center border border-outline-variant/30">
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant" data-icon="person">person</span>
+</div>
+<span class="text-sm text-on-surface-variant font-body">David Chen, CTO</span>
+</div>
+<p class="text-xs text-on-surface-variant font-body mb-4 line-clamp-2 italic">Initial contact via webinar registration. Needs technical deep dive.</p>
+<div class="flex justify-between items-center pt-3 border-t border-white/5">
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full bg-surface-variant border border-surface-container-high z-10 flex items-center justify-center text-[10px] text-on-surface font-bold">MK</div>
+</div>
+<span class="text-xs font-medium text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="mail">mail</span> Sent info packet
+                            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 2: In Progress / Negotiating (Not requested explicitly, but needed for a 3 column kanban to make sense logically, assuming 'Converted' and 'Lost' are terminal states) -->
+<!-- Wait, prompt says: Leads (blue), Converted (green), Lost (red). I will follow the prompt exactly for the 3 columns. -->
+<!-- Column 2: Converted -->
+<div class="flex flex-col bg-surface-container-low rounded-[2rem] p-4 glass-panel ambient-shadow h-full">
+<div class="flex items-center justify-between mb-4 px-2">
+<div class="flex items-center gap-3">
+<!-- using a teal/greenish color from theme for 'green' -->
+<div class="w-3 h-3 rounded-full bg-secondary-container shadow-[0_0_10px_rgba(0,104,122,0.5)]"></div>
+<h3 class="font-headline font-bold text-on-surface text-lg">Converted</h3>
+</div>
+<span class="bg-surface-variant text-on-surface-variant text-xs font-bold font-mono px-2.5 py-1 rounded-full">12</span>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 space-y-4 pb-4 custom-scrollbar">
+<!-- Card 3 -->
+<div class="bg-surface-container-high rounded-xl p-5 border border-outline-variant/20 relative overflow-hidden opacity-90">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary-container"></div>
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-headline font-bold text-on-surface">Vanguard Logistics</h4>
+<span class="text-xs font-mono text-on-surface-variant">Oct 12</span>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<div class="w-6 h-6 rounded-full bg-secondary-container/20 flex items-center justify-center border border-secondary-container/30">
+<span class="material-symbols-outlined text-[14px] text-secondary" data-icon="check_circle">check_circle</span>
+</div>
+<span class="text-sm text-on-surface-variant font-body">Contract Signed</span>
+</div>
+<div class="bg-surface-container-lowest/50 rounded-lg p-3 mb-4 flex justify-between items-center">
+<span class="text-xs text-on-surface-variant">Deal Value</span>
+<span class="text-sm font-bold font-mono text-primary">$45,000</span>
+</div>
+<div class="flex justify-between items-center pt-3 border-t border-white/5">
+<div class="flex -space-x-2">
+<img alt="Agent" class="w-6 h-6 rounded-full border border-surface-container-high z-10" data-alt="Portrait of a smiling man with a short beard in casual tech environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd7D4GQcZLNdsOgOGQ62n7T0xwh6mgCy0ZPzeDAolDypDfVmdFi5zIryhMD8nv5vodmEy5aOhhJadp0PxibH88zCJpppkgXr3Fdlx-rl-TWyz-eLHFO5W0uEzGGzu_EWYeFGCRanLyS4eT-yIa5atxd2G3HIyq3eV_TxCY6QlRKnspXxraoygrnAJkvBRcZXdg8BVNTnfcjb9k_hqour0RYUSEoYSCvmh96U7YMXVqeCaawj8YxfrsT_L3rN4JBPRml7n5v4Ruo-s"/>
+</div>
+<span class="text-xs font-medium text-on-surface-variant">Handed to CSM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 3: Lost -->
+<div class="flex flex-col bg-surface-container-low rounded-[2rem] p-4 glass-panel ambient-shadow h-full">
+<div class="flex items-center justify-between mb-4 px-2">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-error shadow-[0_0_10px_rgba(255,110,132,0.5)]"></div>
+<h3 class="font-headline font-bold text-on-surface text-lg">Lost</h3>
+</div>
+<span class="bg-surface-variant text-on-surface-variant text-xs font-bold font-mono px-2.5 py-1 rounded-full">8</span>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 space-y-4 pb-4 custom-scrollbar">
+<!-- Card 4 -->
+<div class="bg-surface-container-high rounded-xl p-5 border border-outline-variant/20 relative overflow-hidden opacity-75 grayscale-[30%]">
+<div class="absolute top-0 left-0 w-1 h-full bg-error/50"></div>
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-headline font-bold text-on-surface line-through decoration-error/50">Starlight Retail</h4>
+<span class="text-xs font-mono text-on-surface-variant">Sep 28</span>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<span class="text-sm text-on-surface-variant font-body">Marcus Thorne, CEO</span>
+</div>
+<p class="text-xs text-error-dim font-body mb-4 italic bg-error-container/10 p-2 rounded border border-error-container/20">Reason: Budget constraints for Q4. Follow up in Q1 next year.</p>
+<div class="flex justify-between items-center pt-3 border-t border-white/5">
+<div class="flex -space-x-2">
+<img alt="Agent" class="w-6 h-6 rounded-full border border-surface-container-high z-10" data-alt="Portrait of young woman with dark hair in professional setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfY_iTLDRJ8_LYINrqGTiEmIe4PMGprxQHk8GHlz-GvNUMHueudhzWPIAo4_zYkMjvCxYwFot81Sab-2WBdVbLC1dFI1Bi3PDQJERHF-lrcwx8SyAkSGZjExINzqBW7YlLn5554vqeKHaP5-6TYxLNdzu8zqsIQQMx66TX69-2N2PTu-DAtVORZ-RCyzdkyP-eF1YV_eyEXgEJecQqK1lQ6QT9kunHoZDCrjXIwcoN7xF1Z_IrXGOw4V0-rxemhN01-EUZFaMi6_Y"/>
+</div>
+<span class="text-xs font-medium text-on-surface-variant">Archived</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<style>
+        /* Custom Scrollbar for columns */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</body></html>

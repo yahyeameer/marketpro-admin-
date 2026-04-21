@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Management - MarketPro Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-fixed": "#ff8cbc",
+                        "primary": "#bd9dff",
+                        "tertiary": "#ff6daf",
+                        "secondary-dim": "#40ceed",
+                        "inverse-primary": "#742fe5",
+                        "inverse-on-surface": "#545367",
+                        "on-secondary": "#004b58",
+                        "secondary-fixed": "#65e1ff",
+                        "on-tertiary-fixed-variant": "#740044",
+                        "on-primary-fixed-variant": "#390083",
+                        "error": "#ff6e84",
+                        "surface-container-low": "#111124",
+                        "outline": "#757388",
+                        "surface-dim": "#0c0c1d",
+                        "tertiary-container": "#fa53a4",
+                        "on-primary-fixed": "#000000",
+                        "on-surface": "#e6e3fb",
+                        "tertiary-fixed-dim": "#ff73b1",
+                        "surface-bright": "#2a2a43",
+                        "primary-fixed": "#b28cff",
+                        "on-surface-variant": "#aba9bf",
+                        "background": "#0c0c1d",
+                        "primary-fixed-dim": "#a67aff",
+                        "on-error-container": "#ffb2b9",
+                        "on-tertiary-fixed": "#37001d",
+                        "surface-container-lowest": "#000000",
+                        "primary-container": "#b28cff",
+                        "primary-dim": "#8a4cfc",
+                        "outline-variant": "#474659",
+                        "surface-container-highest": "#23233b",
+                        "secondary-fixed-dim": "#48d4f3",
+                        "on-primary-container": "#2e006c",
+                        "surface-tint": "#bd9dff",
+                        "tertiary-dim": "#ff67ad",
+                        "on-tertiary-container": "#2f0018",
+                        "on-secondary-fixed-variant": "#005969",
+                        "surface-variant": "#23233b",
+                        "surface-container": "#18182b",
+                        "secondary": "#53ddfc",
+                        "surface-container-high": "#1d1d33",
+                        "on-tertiary": "#4b002a",
+                        "error-container": "#a70138",
+                        "inverse-surface": "#fcf8ff",
+                        "on-secondary-fixed": "#003a45",
+                        "on-primary": "#3c0089",
+                        "secondary-container": "#00687a",
+                        "on-error": "#490013",
+                        "on-background": "#e6e3fb",
+                        "error-dim": "#d73357",
+                        "surface": "#0c0c1d",
+                        "on-secondary-container": "#ecfaff"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                        label: ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .liquid-orb-cyan {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(64, 206, 237, 0.15) 0%, rgba(64, 206, 237, 0) 70%);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(60px);
+        }
+        .liquid-orb-pink {
+            position: fixed;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(250, 83, 164, 0.1) 0%, rgba(250, 83, 164, 0) 70%);
+            border-radius: 50%;
+            bottom: -200px;
+            left: 100px;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(80px);
+        }
+        .glass-panel {
+            background-color: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(71, 70, 89, 0.15); /* outline-variant at 15% */
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #bd9dff, #ff6daf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #bd9dff, #53ddfc);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body overflow-x-hidden min-h-screen">
+<div class="liquid-orb-cyan"></div>
+<div class="liquid-orb-pink"></div>
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 bottom-0 z-40 flex flex-col w-[240px] h-screen border-r border-white/10 bg-white/5 dark:bg-[#0c0c1d]/40 backdrop-blur-xl shadow-[0_0_40px_rgba(124,58,237,0.08)] hidden md:flex">
+<div class="p-6 h-16 flex items-center mb-4">
+<span class="text-xl font-bold tracking-tighter text-white font-headline">MarketPro</span>
+<span class="text-xs text-on-surface-variant ml-2 font-medium">Admin Console</span>
+</div>
+<div class="flex-1 overflow-y-auto py-4">
+<ul class="space-y-1 px-3">
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined mr-3 text-lg">dashboard</span>
+                        Dashboard
+                    </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined mr-3 text-lg">location_on</span>
+                        Field Visits
+                    </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined mr-3 text-lg">payments</span>
+                        Sales
+                    </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined mr-3 text-lg">group_add</span>
+                        Leads
+                    </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined mr-3 text-lg">badge</span>
+                        Employees
+                    </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined mr-3 text-lg">assessment</span>
+                        Reports
+                    </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg relative text-white font-bold before:absolute before:left-0 before:h-full before:w-1 before:bg-[#7C3AED] before:shadow-[4px_0_12px_rgba(124,58,237,0.5)] bg-white/5 font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined mr-3 text-lg text-[#7C3AED]">manage_accounts</span>
+                        User Management
+                    </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined mr-3 text-lg">settings</span>
+                        Settings
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-0 md:left-[240px] z-30 flex justify-between items-center px-6 h-16 border-b border-white/10 bg-white/5 dark:bg-[#0c0c1d]/30 backdrop-blur-xl">
+<div class="flex items-center gap-4 w-full max-w-md">
+<button class="md:hidden text-white/70 hover:bg-white/10 p-2 rounded-lg transition-all">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="relative w-full glass-panel rounded-lg flex items-center px-3 py-1.5 focus-within:ring-1 focus-within:ring-secondary/50 focus-within:shadow-[0_0_15px_rgba(83,221,252,0.15)] transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2">search</span>
+<input class="bg-transparent border-none text-sm text-on-surface w-full focus:ring-0 p-0 placeholder:text-on-surface-variant/50 font-body" placeholder="Search users, roles..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-white/70 hover:bg-white/10 rounded-full transition-all relative">
+<span class="material-symbols-outlined text-xl">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-tertiary rounded-full shadow-[0_0_8px_rgba(255,109,175,0.6)]"></span>
+</button>
+<button class="p-2 text-white/70 hover:bg-white/10 rounded-full transition-all">
+<span class="material-symbols-outlined text-xl">sensors</span>
+</button>
+<div class="h-8 w-8 rounded-full ml-3 border border-outline-variant/30 overflow-hidden cursor-pointer hover:shadow-[0_0_15px_rgba(189,157,255,0.2)] transition-shadow">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Close up portrait of a professional man with short dark hair in a well-lit office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuTGDxqu0gSlgJzYwIJK3SLzUHaR6y_7xSbLlprNQMiswIjjTcxX3U2PvoelH4Dh9KAn3WfqVKITwBN2RJDj8Y078YWVHZL63eZmbk8G5QnxjROSapAk3gWbaeZaOU6pskahMza6svmQviiuSVI1dajHPBLc8jXuY2eO25AszzxyaLNsLRcHRAyOSoxhe_1nC-mxc951UsrLoiDQiiKfqT7pAUpOgTUvIFNW2sdNVVVi4w-2LKCOKJTWVKgKSQDcom1M9cdd6neGg"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-24 pb-12 px-6 md:px-10 ml-0 md:ml-[240px] relative z-10 min-h-screen flex flex-col">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+<div>
+<h1 class="font-headline text-3xl font-bold tracking-tight mb-2 text-white">User Management</h1>
+<p class="text-on-surface-variant font-label text-sm max-w-lg">Manage access controls, assign roles, and monitor active sessions across the MarketPro ecosystem.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="glass-panel px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-white/10 transition-colors text-white">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                    Filter
+                </button>
+<button class="bg-gradient-primary px-5 py-2.5 rounded-lg text-sm font-semibold text-surface-dim flex items-center gap-2 hover:shadow-[0_0_20px_rgba(189,157,255,0.4)] transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+                    Add User
+                </button>
+</div>
+</div>
+<!-- Metric Cards Bento -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+<div class="glass-panel rounded-xl p-6 relative overflow-hidden group hover:bg-white/5 transition-colors">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant text-sm font-medium font-label">Total Users</span>
+<span class="material-symbols-outlined text-primary/70 bg-primary/10 p-1.5 rounded-md text-sm">group</span>
+</div>
+<div class="font-headline text-3xl font-bold tracking-tight text-white font-mono">1,248</div>
+<div class="mt-2 text-xs text-secondary-dim flex items-center font-medium">
+<span class="material-symbols-outlined text-[14px] mr-1">trending_up</span>
+                    +12% from last month
+                </div>
+</div>
+<div class="glass-panel rounded-xl p-6 relative overflow-hidden group hover:bg-white/5 transition-colors">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-secondary/10 rounded-full blur-2xl group-hover:bg-secondary/20 transition-all"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant text-sm font-medium font-label">Active Sessions</span>
+<span class="material-symbols-outlined text-secondary/70 bg-secondary/10 p-1.5 rounded-md text-sm">radar</span>
+</div>
+<div class="font-headline text-3xl font-bold tracking-tight text-white font-mono">342</div>
+<div class="mt-2 text-xs text-on-surface-variant flex items-center font-medium">
+                    Currently online
+                </div>
+</div>
+<div class="glass-panel rounded-xl p-6 relative overflow-hidden group hover:bg-white/5 transition-colors">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-error/10 rounded-full blur-2xl group-hover:bg-error/20 transition-all"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="text-on-surface-variant text-sm font-medium font-label">Pending Approvals</span>
+<span class="material-symbols-outlined text-error/70 bg-error/10 p-1.5 rounded-md text-sm">hourglass_empty</span>
+</div>
+<div class="font-headline text-3xl font-bold tracking-tight text-white font-mono">18</div>
+<div class="mt-2 text-xs text-error-dim flex items-center font-medium">
+                    Action required
+                </div>
+</div>
+</div>
+<!-- Users Table Container -->
+<div class="glass-panel rounded-xl flex-1 flex flex-col overflow-hidden relative">
+<div class="p-5 border-b border-white/5 flex justify-between items-center bg-surface-container-low/50">
+<h2 class="font-headline text-lg font-semibold text-white">Directory</h2>
+<div class="flex items-center gap-2">
+<button class="text-on-surface-variant hover:text-white p-1 rounded transition-colors"><span class="material-symbols-outlined text-sm">more_vert</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-white/5 text-xs text-on-surface-variant font-label uppercase tracking-wider bg-surface-container-low/30">
+<th class="py-4 px-6 font-medium">User</th>
+<th class="py-4 px-6 font-medium">Role</th>
+<th class="py-4 px-6 font-medium">Status</th>
+<th class="py-4 px-6 font-medium">Last Login</th>
+<th class="py-4 px-6 font-medium text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="text-sm font-body divide-y divide-white/5">
+<!-- Row 1 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30 shrink-0">
+<img alt="Sarah Jenkins" class="w-full h-full object-cover" data-alt="Portrait of a young professional woman smiling softly, wearing a dark blazer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhm5NV-lzwdu1UL4PAIjbIx4FIM2_7PksfS0xNK-45RLwIG1aZbfZFffyRnXnkD-Pfk3Pa-62Pr6bUX2WQPAueGMSf5iie42sULxQJ7gFZmBq-E7McSWmgi5AuU-AvPhrPDIOxL41OrVIzmrySeeEdo53T1FLhEXu4CwXwu9-7we6HhkdDSnUpyFswcxx2unXlgfMPyCvp5hC33PFhBSaJZv6pAOskrIXgEtZ-B3FesVqDAVBbLfoIwS07giQIN2o270O5njGhKHA"/>
+</div>
+<div>
+<div class="font-semibold text-white">Sarah Jenkins</div>
+<div class="text-xs text-on-surface-variant">sarah.j@marketpro.com</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">Admin</span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-secondary-dim shadow-[0_0_5px_rgba(64,206,237,0.8)]"></div>
+<span class="text-on-surface text-xs font-medium">Active</span>
+</div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant text-xs font-mono">
+                                Just now
+                            </td>
+<td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-on-surface-variant hover:text-white transition-colors p-1"><span class="material-symbols-outlined text-sm">edit</span></button>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1"><span class="material-symbols-outlined text-sm">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30 shrink-0">
+<img alt="Marcus Chen" class="w-full h-full object-cover" data-alt="Portrait of an asian man with glasses looking directly at camera against gray background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRc1mAQlgKuZSls_lDrZwI1gowvUecZseGpnuLx1Zz5oUzOtKu2IhfAoAHjrZF32pFIUURW_DzMuWyH25zSuzgWmkcYCRIUbs5xiLsPXrVA2lBvP9AExTP_FmeO-EFwH9uMTu9eS_Goj88_gowr_bk-OH1V8D-JgGxHDxl6MWyiaF8rnUiXeWTcXMAFSKLytLb7eW3W5pi9zoOmkd74KRmTW2UXDNwI_EkScQBpk8jf_0-jyfWsiORfYLPsBJfaA8JX3a3jL8mh_Y"/>
+</div>
+<div>
+<div class="font-semibold text-white">Marcus Chen</div>
+<div class="text-xs text-on-surface-variant">m.chen@marketpro.com</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-secondary/10 text-secondary border border-secondary/20">Manager</span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-secondary-dim shadow-[0_0_5px_rgba(64,206,237,0.8)]"></div>
+<span class="text-on-surface text-xs font-medium">Active</span>
+</div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant text-xs font-mono">
+                                2 hrs ago
+                            </td>
+<td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-on-surface-variant hover:text-white transition-colors p-1"><span class="material-symbols-outlined text-sm">edit</span></button>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1"><span class="material-symbols-outlined text-sm">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30 shrink-0 bg-surface-container-highest flex items-center justify-center">
+<span class="text-xs font-bold text-tertiary">ED</span>
+</div>
+<div>
+<div class="font-semibold text-white">Elena Diaz</div>
+<div class="text-xs text-on-surface-variant">elena.d@marketpro.com</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-tertiary/10 text-tertiary border border-tertiary/20">Field Marketer</span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-outline"></div>
+<span class="text-on-surface-variant text-xs font-medium">Offline</span>
+</div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant text-xs font-mono">
+                                1 day ago
+                            </td>
+<td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-on-surface-variant hover:text-white transition-colors p-1"><span class="material-symbols-outlined text-sm">edit</span></button>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1"><span class="material-symbols-outlined text-sm">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30 shrink-0">
+<img alt="David Kim" class="w-full h-full object-cover" data-alt="Portrait of a young man outdoors with soft natural lighting looking thoughtful" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd9-XU80O0v8k2BEweSRcoAuVvbG2bOQ6R11ox3JtOS9CN_2QcJ6IeRqwzgSQ9DjjWVot__TdZEgH4IMsxJ-qSzUayodK3U217wL65zVVZYvG9MLF1lL3sN2uAYxGdktEMVE86x_JkJdzoDDy6lyLZ51obC-W73ZHn3NMYXvhrCyWqXAZUU3I3IabJiMRBPJ-Nxenv4EWTCJhfo9fvpgUwarxsBjUQO6ZxrTVSXpoQ1XVA0SoxSj3jtCd84yluD8rTj0g7lWPxzMc"/>
+</div>
+<div>
+<div class="font-semibold text-white">David Kim</div>
+<div class="text-xs text-on-surface-variant">dkim@marketpro.com</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-secondary-dim/10 text-secondary-dim border border-secondary-dim/20">Sales Agent</span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-error-dim"></div>
+<span class="text-error-dim text-xs font-medium">Suspended</span>
+</div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant text-xs font-mono">
+                                Oct 12, 2023
+                            </td>
+<td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-on-surface-variant hover:text-white transition-colors p-1"><span class="material-symbols-outlined text-sm">edit</span></button>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1"><span class="material-symbols-outlined text-sm">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-4 border-t border-white/5 flex items-center justify-between text-xs text-on-surface-variant bg-surface-container-low/30 mt-auto">
+<div>Showing <span class="font-mono text-white">1</span> to <span class="font-mono text-white">4</span> of <span class="font-mono text-white">1,248</span> results</div>
+<div class="flex items-center gap-1">
+<button class="p-1 hover:text-white hover:bg-white/5 rounded disabled:opacity-50"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="w-6 h-6 rounded bg-primary/20 text-primary font-medium flex items-center justify-center">1</button>
+<button class="w-6 h-6 rounded hover:bg-white/5 hover:text-white flex items-center justify-center">2</button>
+<button class="w-6 h-6 rounded hover:bg-white/5 hover:text-white flex items-center justify-center">3</button>
+<span class="px-1">...</span>
+<button class="p-1 hover:text-white hover:bg-white/5 rounded"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+</div>
+</main>
+<!-- Overlay Modal for Add User (Hidden by default, shown for demonstration of design request) -->
+<!-- Add 'hidden' class to the parent div below to hide in production -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface/80 backdrop-blur-sm hidden">
+<div class="glass-panel w-full max-w-lg rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(189,157,255,0.08)] relative">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+<div class="p-6 border-b border-white/5 flex justify-between items-center relative z-10">
+<h3 class="font-headline text-xl font-bold text-white">Add New User</h3>
+<button class="text-on-surface-variant hover:text-white transition-colors p-1 rounded-full hover:bg-white/5">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 space-y-5 relative z-10">
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-on-surface-variant font-label">First Name</label>
+<input class="w-full bg-surface-container-low border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:border-secondary/50 focus:ring-1 focus:ring-secondary/50 focus:outline-none transition-all placeholder:text-on-surface-variant/30" placeholder="Jane" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-on-surface-variant font-label">Last Name</label>
+<input class="w-full bg-surface-container-low border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:border-secondary/50 focus:ring-1 focus:ring-secondary/50 focus:outline-none transition-all placeholder:text-on-surface-variant/30" placeholder="Doe" type="text"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-on-surface-variant font-label">Email Address</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-sm">mail</span>
+<input class="w-full bg-surface-container-low border border-white/5 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:border-secondary/50 focus:ring-1 focus:ring-secondary/50 focus:outline-none transition-all placeholder:text-on-surface-variant/30" placeholder="jane.doe@marketpro.com" type="email"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-medium text-on-surface-variant font-label">Role Assignment</label>
+<select class="w-full bg-surface-container-low border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:border-secondary/50 focus:ring-1 focus:ring-secondary/50 focus:outline-none transition-all appearance-none cursor-pointer">
+<option disabled="" selected="" value="">Select a role...</option>
+<option value="admin">Admin</option>
+<option value="manager">Manager</option>
+<option value="field">Field Marketer</option>
+<option value="sales">Sales Agent</option>
+</select>
+</div>
+</div>
+<div class="p-6 border-t border-white/5 flex justify-end gap-3 bg-surface-container-lowest/30 relative z-10">
+<button class="px-5 py-2.5 rounded-lg text-sm font-medium text-on-surface hover:bg-white/5 transition-colors border border-white/5">Cancel</button>
+<button class="bg-gradient-primary px-6 py-2.5 rounded-lg text-sm font-semibold text-surface-dim hover:shadow-[0_0_20px_rgba(189,157,255,0.4)] transition-all">Create User</button>
+</div>
+</div>
+</div>
+</body></html>

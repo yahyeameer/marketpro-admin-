@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Field Visits - MarketPro Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#ff8cbc",
+                    "primary": "#bd9dff",
+                    "tertiary": "#ff6daf",
+                    "secondary-dim": "#40ceed",
+                    "inverse-primary": "#742fe5",
+                    "inverse-on-surface": "#545367",
+                    "on-secondary": "#004b58",
+                    "secondary-fixed": "#65e1ff",
+                    "on-tertiary-fixed-variant": "#740044",
+                    "on-primary-fixed-variant": "#390083",
+                    "error": "#ff6e84",
+                    "surface-container-low": "#111124",
+                    "outline": "#757388",
+                    "surface-dim": "#0c0c1d",
+                    "tertiary-container": "#fa53a4",
+                    "on-primary-fixed": "#000000",
+                    "on-surface": "#e6e3fb",
+                    "tertiary-fixed-dim": "#ff73b1",
+                    "surface-bright": "#2a2a43",
+                    "primary-fixed": "#b28cff",
+                    "on-surface-variant": "#aba9bf",
+                    "background": "#0c0c1d",
+                    "primary-fixed-dim": "#a67aff",
+                    "on-error-container": "#ffb2b9",
+                    "on-tertiary-fixed": "#37001d",
+                    "surface-container-lowest": "#000000",
+                    "primary-container": "#b28cff",
+                    "primary-dim": "#8a4cfc",
+                    "outline-variant": "#474659",
+                    "surface-container-highest": "#23233b",
+                    "secondary-fixed-dim": "#48d4f3",
+                    "on-primary-container": "#2e006c",
+                    "surface-tint": "#bd9dff",
+                    "tertiary-dim": "#ff67ad",
+                    "on-tertiary-container": "#2f0018",
+                    "on-secondary-fixed-variant": "#005969",
+                    "surface-variant": "#23233b",
+                    "surface-container": "#18182b",
+                    "secondary": "#53ddfc",
+                    "surface-container-high": "#1d1d33",
+                    "on-tertiary": "#4b002a",
+                    "error-container": "#a70138",
+                    "inverse-surface": "#fcf8ff",
+                    "on-secondary-fixed": "#003a45",
+                    "on-primary": "#3c0089",
+                    "secondary-container": "#00687a",
+                    "on-error": "#490013",
+                    "on-background": "#e6e3fb",
+                    "error-dim": "#d73357",
+                    "surface": "#0c0c1d",
+                    "on-secondary-container": "#ecfaff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"],
+                    "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { background-color: theme('colors.surface'); color: theme('colors.on-surface'); }
+        .glass-panel {
+            background-color: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(71, 70, 89, 0.15); /* outline-variant at 15% */
+        }
+        .text-gradient {
+            background-image: linear-gradient(135deg, theme('colors.primary'), theme('colors.tertiary'));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .bg-gradient-btn {
+            background-image: linear-gradient(135deg, theme('colors.primary'), theme('colors.tertiary'));
+        }
+        /* Custom Scrollbar for dark theme */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: theme('colors.surface-container-high'); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: theme('colors.outline-variant'); }
+    </style>
+</head>
+<body class="font-body antialiased min-h-screen flex overflow-hidden selection:bg-primary-dim selection:text-white relative">
+<!-- Ambient Liquid Light Orbs -->
+<div class="fixed top-0 left-[240px] w-full h-full pointer-events-none overflow-hidden z-0">
+<div class="absolute top-[10%] right-[15%] w-[400px] h-[400px] rounded-full bg-secondary-dim opacity-10 blur-[100px]"></div>
+<div class="absolute bottom-[20%] left-[10%] w-[500px] h-[500px] rounded-full bg-tertiary-container opacity-5 blur-[120px]"></div>
+</div>
+<!-- SideNavBar (Shared Component JSON) -->
+<nav class="fixed left-0 top-0 bottom-0 z-40 flex flex-col w-[240px] h-screen border-r border-white/10 bg-white/5 dark:bg-[#0c0c1d]/40 backdrop-blur-xl shadow-[0_0_40px_rgba(124,58,237,0.08)]">
+<!-- Brand Header -->
+<div class="h-20 flex items-center px-6 gap-3 shrink-0">
+<div class="w-8 h-8 rounded-lg bg-gradient-btn flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white text-lg" data-weight="fill" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+<div>
+<div class="font-['Plus_Jakarta_Sans'] text-xl font-bold tracking-tighter text-white">MarketPro</div>
+<div class="font-label text-[10px] text-white/50 uppercase tracking-widest mt-0.5">Admin Console</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-['Plus_Jakarta_Sans'] text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95" href="#">
+<span class="material-symbols-outlined text-lg">dashboard</span>
+                Dashboard
+            </a>
+<!-- Active State Navigation: Field Visits -->
+<a class="relative flex items-center gap-3 px-3 py-2.5 rounded-lg font-['Plus_Jakarta_Sans'] text-sm text-white font-bold before:absolute before:left-0 before:h-[60%] before:top-[20%] before:w-1 before:bg-[#7C3AED] before:shadow-[4px_0_12px_rgba(124,58,237,0.5)] bg-white/5 before:rounded-r-full transition-transform scale-98 active:scale-95" href="#">
+<span class="material-symbols-outlined text-lg" data-weight="fill" style="font-variation-settings: 'FILL' 1;">location_on</span>
+                Field Visits
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-['Plus_Jakarta_Sans'] text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95" href="#">
+<span class="material-symbols-outlined text-lg">payments</span>
+                Sales
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-['Plus_Jakarta_Sans'] text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95" href="#">
+<span class="material-symbols-outlined text-lg">group_add</span>
+                Leads
+            </a>
+<div class="pt-6 pb-2 px-3">
+<span class="font-label text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Management</span>
+</div>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-['Plus_Jakarta_Sans'] text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95" href="#">
+<span class="material-symbols-outlined text-lg">badge</span>
+                Employees
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-['Plus_Jakarta_Sans'] text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95" href="#">
+<span class="material-symbols-outlined text-lg">assessment</span>
+                Reports
+            </a>
+<div class="pt-6 pb-2 px-3">
+<span class="font-label text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">System</span>
+</div>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-['Plus_Jakarta_Sans'] text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95" href="#">
+<span class="material-symbols-outlined text-lg">manage_accounts</span>
+                User Management
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-['Plus_Jakarta_Sans'] text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95" href="#">
+<span class="material-symbols-outlined text-lg">settings</span>
+                Settings
+            </a>
+</div>
+<!-- User Profile Quick View -->
+<div class="p-4 border-t border-white/5 mt-auto">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<img alt="Admin Profile Picture" class="w-8 h-8 rounded-full border border-white/10" data-alt="close up portrait of a professional woman with dark hair in a sleek studio lighting environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuAwMISEdsBNdC-uwBxNIgIPMfDNnP-jbSmcZ9zr5dza5G_r-4CO566HGNNzltlct-VVq_ZZf2ea263qT1kRKA3Aty6EgvZkR2-F6sJlcMNfAH9PkgwJHq-t4NY-xf7m4PBPK1tRTMJAvBYsyCB_baRcjKGWZ3l3cVSnhsSKdYo3JlN0ZJ9R331uFTxYUtJlcCAVR5KGP_PKgs2fiL_oVmOCB2-95VRfXXYi49yNaTDo83JxjoONjKTpdMgoUnY1afY3a1fCZX6s8"/>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-medium text-white truncate">Sarah Jenkins</p>
+<p class="text-xs text-white/50 truncate">Regional Director</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- TopNavBar (Shared Component JSON) -->
+<header class="fixed top-0 right-0 left-[240px] z-30 flex justify-between items-center px-6 h-16 border-b border-white/10 bg-white/5 dark:bg-[#0c0c1d]/30 backdrop-blur-xl transition-all duration-300 ease-in-out">
+<!-- Search Bar (on_left) -->
+<div class="flex-1 max-w-md">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50 group-focus-within:text-secondary transition-colors pointer-events-none">search</span>
+<input class="w-full bg-surface-container-low border border-white/10 text-on-surface text-sm rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 transition-all font-body placeholder:text-white/30" placeholder="Search visits, agents, or companies..." type="text"/>
+<div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1 pointer-events-none">
+<kbd class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-white/40 bg-surface-container rounded border border-white/10">⌘</kbd>
+<kbd class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-white/40 bg-surface-container rounded border border-white/10">K</kbd>
+</div>
+</div>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-2">
+<button class="w-9 h-9 flex items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all relative">
+<span class="material-symbols-outlined text-xl">sensors</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white transition-all relative group">
+<span class="material-symbols-outlined text-xl">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-tertiary-container ring-2 ring-surface shadow-[0_0_8px_rgba(250,83,164,0.6)]"></span>
+</button>
+<div class="h-5 w-px bg-white/10 mx-2"></div>
+<button class="flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-all pl-1">
+<span class="material-symbols-outlined text-xl">help</span>
+<span class="hidden xl:inline-block text-xs">Help &amp; Docs</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-[240px] mt-16 overflow-y-auto relative z-10 p-6 lg:p-8 xl:p-10">
+<!-- Page Header Area -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+<div>
+<h1 class="font-headline text-display-lg font-bold text-on-surface tracking-tight flex items-center gap-3">
+                    Field Visits
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container-highest text-on-surface-variant border border-white/5">
+                        24 Today
+                    </span>
+</h1>
+<p class="font-body text-label-md text-on-surface-variant mt-1 max-w-2xl">
+                    Monitor active agent deployments, track outcomes, and manage follow-ups across all regional territories.
+                </p>
+</div>
+<div class="shrink-0">
+<button class="h-10 px-5 rounded-lg bg-gradient-btn text-white font-label text-sm font-semibold flex items-center gap-2 hover:shadow-[0_0_20px_rgba(189,157,255,0.3)] transition-all active:scale-95 group">
+<span class="material-symbols-outlined text-lg transition-transform group-hover:rotate-90">add</span>
+                    Add Visit
+                </button>
+</div>
+</div>
+<!-- Filter & Control Bar (Glass Panel) -->
+<div class="glass-panel rounded-xl p-2 mb-6 flex flex-col lg:flex-row gap-3 items-center justify-between relative z-20">
+<!-- Left: Filters -->
+<div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+<!-- Date Picker Mock -->
+<div class="relative">
+<button class="h-9 px-3 rounded-lg bg-surface-container-low border border-white/5 flex items-center gap-2 text-sm text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base text-on-surface-variant">calendar_today</span>
+<span>Oct 12 - Oct 19, 2023</span>
+<span class="material-symbols-outlined text-base text-on-surface-variant ml-1">expand_more</span>
+</button>
+</div>
+<!-- Status Filter -->
+<div class="relative">
+<button class="h-9 px-3 rounded-lg bg-surface-container-low border border-white/5 flex items-center gap-2 text-sm text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base text-on-surface-variant">filter_list</span>
+<span>Status: All</span>
+<span class="material-symbols-outlined text-base text-on-surface-variant ml-1">expand_more</span>
+</button>
+</div>
+<!-- Agent Filter -->
+<div class="relative">
+<button class="h-9 px-3 rounded-lg bg-surface-container-low border border-white/5 flex items-center gap-2 text-sm text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base text-on-surface-variant">person</span>
+<span>Agent: Any</span>
+<span class="material-symbols-outlined text-base text-on-surface-variant ml-1">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Right: View Controls & Secondary Search -->
+<div class="flex items-center gap-2 w-full lg:w-auto justify-end">
+<div class="relative w-full lg:w-64 hidden md:block">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+<input class="w-full h-9 bg-surface-container-lowest border border-white/5 text-on-surface text-sm rounded-lg pl-9 pr-3 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 transition-all font-body" placeholder="Filter this view..." type="text"/>
+</div>
+<div class="h-6 w-px bg-white/10 hidden lg:block mx-1"></div>
+<div class="flex bg-surface-container-low rounded-lg p-1 border border-white/5">
+<button class="w-7 h-7 rounded flex items-center justify-center bg-surface-variant text-white shadow-sm">
+<span class="material-symbols-outlined text-[18px]">table_rows</span>
+</button>
+<button class="w-7 h-7 rounded flex items-center justify-center text-on-surface-variant hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Data Table (Glass Container) -->
+<div class="glass-panel rounded-xl overflow-hidden relative z-10 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+<div class="overflow-x-auto">
+<div class="absolute inset-0 border border-primary/0 group-hover:border-primary/20 pointer-events-none transition-colors rounded-none z-[-1] shadow-[inset_4px_0_0_rgba(189,157,255,0)] group-hover:shadow-[inset_4px_0_0_rgba(189,157,255,1)]"></div><div class="absolute inset-0 border border-primary/0 group-hover:border-primary/20 pointer-events-none transition-colors rounded-none z-[-1] shadow-[inset_4px_0_0_rgba(189,157,255,0)] group-hover:shadow-[inset_4px_0_0_rgba(189,157,255,1)]"></div><div class="absolute inset-0 border border-primary/0 group-hover:border-primary/20 pointer-events-none transition-colors rounded-none z-[-1] shadow-[inset_4px_0_0_rgba(189,157,255,0)] group-hover:shadow-[inset_4px_0_0_rgba(189,157,255,1)]"></div><div class="absolute inset-0 border border-primary/0 group-hover:border-primary/20 pointer-events-none transition-colors rounded-none z-[-1] shadow-[inset_4px_0_0_rgba(189,157,255,0)] group-hover:shadow-[inset_4px_0_0_rgba(189,157,255,1)]"></div><table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-white/5 bg-surface-container-low/50">
+<th class="px-6 py-4 font-headline text-xs font-semibold text-on-surface-variant uppercase tracking-wider w-1/4">Company &amp; Contact</th>
+<th class="px-6 py-4 font-headline text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Contact Details</th>
+<th class="px-6 py-4 font-headline text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Visit Details</th>
+<th class="px-6 py-4 font-headline text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 font-headline text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Agent</th>
+<th class="px-6 py-4 font-headline text-xs font-semibold text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body text-sm divide-y divide-white/5">
+<!-- Row 1: Interested -->
+<tr class="group hover:bg-white/[0.02] transition-colors relative cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center border border-white/10 text-primary font-headline font-bold">
+                                        AC
+                                    </div>
+<div>
+<div class="font-semibold text-on-surface group-hover:text-primary transition-colors">Apex Corp Logistics</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Michael Chang, Director</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="text-on-surface font-mono text-xs">(555) 019-2834</div>
+<div class="text-on-surface-variant text-xs mt-0.5">m.chang@apexcorp.com</div>
+</td>
+<td class="px-6 py-4">
+<div class="text-on-surface">Oct 18, 2023</div>
+<div class="text-on-surface-variant text-xs mt-0.5 font-mono">14:30 EST</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#004b58]/30 text-secondary border border-secondary/20 shadow-[0_0_10px_rgba(83,221,252,0.1)]">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                    Interested
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<img alt="Agent Avatar" class="w-6 h-6 rounded-full border border-white/10" data-alt="portrait of young male professional smiling against neutral grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZJc9VmPLL6MCgHoxh3R0AO0sILTZA6V1jT8MYqDC-QDd2L-3cRrKe-z2H30G4P9aV4D8PcdOXiZ12ofwITkYfCXOeo6LWSNZg15sUXciZENtI4ONpgW1RTgx5h4oD2WCqoakaO-9YadZRZszp4rHaXL4j10N9laynnM75m_6yVC0lmwSYQfoRUKVUlYerR4woPlLqu0fnrPHvE3wJgixfkyBTdVntmZo9DHGnB1iXFpCO44JkYHsnWn6qtXZONuFSWLmtmIVWI38"/>
+<span class="text-on-surface">David R.</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-on-surface-variant hover:text-white p-1 rounded hover:bg-white/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</td>
+<!-- Row Glow Effect -->
+</tr>
+<!-- Row 2: Follow-up -->
+<tr class="group hover:bg-white/[0.02] transition-colors relative cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center border border-white/10 text-primary font-headline font-bold">
+                                        N
+                                    </div>
+<div>
+<div class="font-semibold text-on-surface group-hover:text-primary transition-colors">Nexus Healthcare</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Sarah Jenkins, VP Ops</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="text-on-surface font-mono text-xs">(555) 847-9921</div>
+<div class="text-on-surface-variant text-xs mt-0.5">s.jenkins@nexus.health</div>
+</td>
+<td class="px-6 py-4">
+<div class="text-on-surface">Oct 18, 2023</div>
+<div class="text-on-surface-variant text-xs mt-0.5 font-mono">11:00 EST</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#740044]/30 text-tertiary-fixed border border-tertiary-fixed/20 shadow-[0_0_10px_rgba(255,140,188,0.1)]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+                                    Follow-up
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<img alt="Agent Avatar" class="w-6 h-6 rounded-full border border-white/10" data-alt="portrait of cheerful woman with glasses looking at camera" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_hXAsmsXS1Mbo_dwzxS9Cekhj3gcEFiN-2J4ioEZSSvTtKnguuDgGrdrnuT03fYyD1YLMGaCU-EY0DewKdfMmpsc0Yf_GqXCF8MSIAX4bsGc3FPeNgtB4a--H6r1jzYJ6e6FbbD5N9fXeQfP3hkfuhezAEbT8TByL8eIDTnonKfrz2dfFLc_EwN5ufT7jnuAT7DfEdreW8Eude9u0D4lPjh_9E74XY8Qfer4qmHTPDDBZayKzLkzdQc8mpcALWZ9NN9A4OuAXSqo"/>
+<span class="text-on-surface">Elena G.</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-on-surface-variant hover:text-white p-1 rounded hover:bg-white/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Not Interested -->
+<tr class="group hover:bg-white/[0.02] transition-colors relative cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center border border-white/10 text-primary font-headline font-bold">
+                                        V
+                                    </div>
+<div>
+<div class="font-semibold text-on-surface group-hover:text-primary transition-colors">Vanguard Retail</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Tom Baker, Store Mgr</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="text-on-surface font-mono text-xs">(555) 332-1100</div>
+<div class="text-on-surface-variant text-xs mt-0.5">tbaker@vanguard.net</div>
+</td>
+<td class="px-6 py-4">
+<div class="text-on-surface">Oct 17, 2023</div>
+<div class="text-on-surface-variant text-xs mt-0.5 font-mono">16:15 EST</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-error-container/30 text-error border border-error/20 shadow-[0_0_10px_rgba(255,110,132,0.1)]">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                    Not Interested
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<img alt="Agent Avatar" class="w-6 h-6 rounded-full border border-white/10" data-alt="portrait of young male professional smiling against neutral grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrL-Aa-IJf_fnnGw4L67cUyjyELbls6gtmR5AOFex-ZjAPtXt7q5Dmj1aKqCb9r4-hfR1oDcUNXOibZiHAxe0wuQ8jP8hYf7L0VUds9mQuMC2-blgZL3i40GSup09mrOoWAy-lry53RqJ1OxITBQkqu9_VtVO3hQXxCKapyuCYV6M3L0l5AOVHkqvr52_HqcNQ2-IzX9iSABPX0Y4hRldqa-0O739k0gX4SABARbjN0Ndsv4i2tkLr0ZI03kNzU6-dsHMknx2N820"/>
+<span class="text-on-surface">David R.</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-on-surface-variant hover:text-white p-1 rounded hover:bg-white/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Pending -->
+<tr class="group hover:bg-white/[0.02] transition-colors relative cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center border border-white/10 text-primary font-headline font-bold">
+                                        O
+                                    </div>
+<div>
+<div class="font-semibold text-on-surface group-hover:text-primary transition-colors">Omni Systems</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Jessica Wong, CTO</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="text-on-surface font-mono text-xs">(555) 902-3844</div>
+<div class="text-on-surface-variant text-xs mt-0.5">jwong@omni.sys</div>
+</td>
+<td class="px-6 py-4">
+<div class="text-on-surface">Oct 17, 2023</div>
+<div class="text-on-surface-variant text-xs mt-0.5 font-mono">09:00 EST</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-surface-bright border border-white/10 text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                    Pending Log
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<img alt="Agent Avatar" class="w-6 h-6 rounded-full border border-white/10" data-alt="portrait of mature man with short beard looking confident" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeaYFnJ3V6hNZpWkfCTYi5VUXpORiUtBxv0bODV8hTLMZ0_lEb5eKl7ZBVvwbuDE-1dHhoel21tUGY8xGEPg3wR76EP8TyAGzQIxiO-EsR1Zex4ubOUQ5JDwjjfCHOl8ETnFGI5hAmKf15lrFK10vjTZ80lHpghu_GPt150cRLigeYvMXtniBl1GbuXW09ah6_PWiaS38rpcuwOKGQfflFQEU0DPYF65MryehJKUqxzP8lomJt0tLfVwxhwxBXRIys8RvzyfcV6Hg"/>
+<span class="text-on-surface">Marcus T.</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-on-surface-variant hover:text-white p-1 rounded hover:bg-white/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Bottom Bar -->
+<div class="border-t border-white/5 bg-surface-container-low/30 px-6 py-3 flex items-center justify-between">
+<div class="text-xs text-on-surface-variant font-body">
+                    Showing <span class="font-mono text-on-surface">1</span> to <span class="font-mono text-on-surface">4</span> of <span class="font-mono text-on-surface">128</span> entries
+                </div>
+<div class="flex gap-1">
+<button class="h-8 px-2 rounded flex items-center justify-center text-on-surface-variant hover:bg-white/5 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="h-8 w-8 rounded flex items-center justify-center bg-primary/20 text-primary font-medium text-sm border border-primary/30">1</button>
+<button class="h-8 w-8 rounded flex items-center justify-center text-on-surface hover:bg-white/5 transition-colors text-sm">2</button>
+<button class="h-8 w-8 rounded flex items-center justify-center text-on-surface hover:bg-white/5 transition-colors text-sm">3</button>
+<span class="h-8 w-8 flex items-center justify-center text-on-surface-variant text-sm">...</span>
+<button class="h-8 w-8 rounded flex items-center justify-center text-on-surface hover:bg-white/5 transition-colors text-sm">12</button>
+<button class="h-8 px-2 rounded flex items-center justify-center text-on-surface hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

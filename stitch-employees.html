@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MarketPro Admin - Employee Performance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ff8cbc",
+                        "primary": "#bd9dff",
+                        "tertiary": "#ff6daf",
+                        "secondary-dim": "#40ceed",
+                        "inverse-primary": "#742fe5",
+                        "inverse-on-surface": "#545367",
+                        "on-secondary": "#004b58",
+                        "secondary-fixed": "#65e1ff",
+                        "on-tertiary-fixed-variant": "#740044",
+                        "on-primary-fixed-variant": "#390083",
+                        "error": "#ff6e84",
+                        "surface-container-low": "#111124",
+                        "outline": "#757388",
+                        "surface-dim": "#0c0c1d",
+                        "tertiary-container": "#fa53a4",
+                        "on-primary-fixed": "#000000",
+                        "on-surface": "#e6e3fb",
+                        "tertiary-fixed-dim": "#ff73b1",
+                        "surface-bright": "#2a2a43",
+                        "primary-fixed": "#b28cff",
+                        "on-surface-variant": "#aba9bf",
+                        "background": "#0c0c1d",
+                        "primary-fixed-dim": "#a67aff",
+                        "on-error-container": "#ffb2b9",
+                        "on-tertiary-fixed": "#37001d",
+                        "surface-container-lowest": "#000000",
+                        "primary-container": "#b28cff",
+                        "primary-dim": "#8a4cfc",
+                        "outline-variant": "#474659",
+                        "surface-container-highest": "#23233b",
+                        "secondary-fixed-dim": "#48d4f3",
+                        "on-primary-container": "#2e006c",
+                        "surface-tint": "#bd9dff",
+                        "tertiary-dim": "#ff67ad",
+                        "on-tertiary-container": "#2f0018",
+                        "on-secondary-fixed-variant": "#005969",
+                        "surface-variant": "#23233b",
+                        "surface-container": "#18182b",
+                        "secondary": "#53ddfc",
+                        "surface-container-high": "#1d1d33",
+                        "on-tertiary": "#4b002a",
+                        "error-container": "#a70138",
+                        "inverse-surface": "#fcf8ff",
+                        "on-secondary-fixed": "#003a45",
+                        "on-primary": "#3c0089",
+                        "secondary-container": "#00687a",
+                        "on-error": "#490013",
+                        "on-background": "#e6e3fb",
+                        "error-dim": "#d73357",
+                        "surface": "#0c0c1d",
+                        "on-secondary-container": "#ecfaff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .liquid-orb-cyan {
+            position: fixed;
+            top: 20%;
+            left: 10%;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, rgba(64,206,237,0.15) 0%, rgba(12,12,29,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            pointer-events: none;
+            filter: blur(60px);
+        }
+        .liquid-orb-pink {
+            position: fixed;
+            bottom: 10%;
+            right: 5%;
+            width: 35vw;
+            height: 35vw;
+            background: radial-gradient(circle, rgba(250,83,164,0.12) 0%, rgba(12,12,29,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            pointer-events: none;
+            filter: blur(60px);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(71, 70, 89, 0.15); /* outline-variant 15% */
+        }
+        .ambient-shadow {
+            box-shadow: 0 0 40px rgba(138, 76, 252, 0.08); /* primary-dim 8% */
+        }
+        .data-metric {
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen">
+<!-- Liquid Light Background Orbs -->
+<div class="liquid-orb-cyan"></div>
+<div class="liquid-orb-pink"></div>
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 bottom-0 z-40 flex flex-col w-[240px] h-screen border-r border-white/10 bg-white/5 dark:bg-[#0c0c1d]/40 backdrop-blur-xl shadow-[0_0_40px_rgba(124,58,237,0.08)] hidden md:flex">
+<div class="h-16 flex items-center px-6">
+<span class="font-['Plus_Jakarta_Sans'] text-xl font-bold tracking-tighter text-white">MarketPro</span>
+<span class="ml-2 text-xs text-on-surface-variant font-medium">Admin Console</span>
+</div>
+<div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">location_on</span>
+                Field Visits
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">payments</span>
+                Sales
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">group_add</span>
+                Leads
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg relative text-white font-bold before:absolute before:left-0 before:h-full before:w-1 before:bg-[#7C3AED] before:shadow-[4px_0_12px_rgba(124,58,237,0.5)] bg-white/5 font-['Plus_Jakarta_Sans'] text-sm" href="#">
+<span class="material-symbols-outlined text-[#7C3AED]" style="font-variation-settings: 'FILL' 1;">badge</span>
+                Employees
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">assessment</span>
+                Reports
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">manage_accounts</span>
+                User Management
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/50 hover:text-white transition-colors hover:bg-white/5 hover:backdrop-blur-md transition-all duration-300 scale-98 active:scale-95 transition-transform font-['Plus_Jakarta_Sans'] text-sm font-medium mt-auto" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                Settings
+            </a>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-0 md:left-[240px] z-30 flex justify-between items-center px-6 h-16 border-b border-white/10 bg-white/5 dark:bg-[#0c0c1d]/30 backdrop-blur-xl">
+<div class="flex items-center gap-4 flex-1">
+<button class="md:hidden text-white/70 hover:text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface text-sm rounded-full pl-10 pr-4 py-1.5 focus:border-secondary focus:ring-1 focus:ring-secondary/50 focus:outline-none transition-all placeholder:text-on-surface-variant/50" placeholder="Search employees..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="text-white/70 hover:bg-white/10 transition-all duration-300 ease-in-out p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-white/70 hover:bg-white/10 transition-all duration-300 ease-in-out p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">sensors</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30 ml-2">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Default admin user avatar with initials AU on a purple background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSO47pHF0mzme5cLZhAP5onIH4HmdvXmvZpj-I5n0LEmT6hgmmQCzT_t96LaPuFMmpS9lQ2ZBZGwjdxnTeYE27BJ3pJa5ETnv8O9rTOtNW7B9AK8-MXxJ_MiNhmuSxYYH2yNWufdJIXqrMySohnLJo1kXXNDlt9FDjfzpqOB4I_KKI07tUo7abL9pgEU7_Yop4hU8z_61vxpxzTiuxi23KCGZ9ovRKjgWhxXKNzufJJGQ3Qb0Srk4VcqXHqE6V4hm7ExIlybYE3Co"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-24 pb-12 px-6 md:pl-[264px] md:pr-8 min-h-screen max-w-[1600px] mx-auto">
+<!-- Header & Filters -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+<div>
+<h1 class="font-headline text-3xl font-bold text-on-surface tracking-tight mb-1">Employee Performance</h1>
+<p class="text-on-surface-variant text-sm font-label">Real-time metrics and historical KPI data for field staff.</p>
+</div>
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<div class="glass-panel rounded-lg flex items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2">calendar_today</span>
+<span class="text-on-surface font-medium">Last 30 Days</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm ml-2">arrow_drop_down</span>
+</div>
+<button class="bg-gradient-to-br from-primary to-secondary text-surface-container-lowest font-medium text-sm px-4 py-1.5 rounded-lg hover:shadow-[0_0_15px_rgba(189,157,255,0.4)] transition-all">
+                    Export Data
+                </button>
+</div>
+</div>
+<!-- Employee Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+<!-- Card 1 -->
+<div class="glass-panel rounded-xl p-5 ambient-shadow flex flex-col group hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="Sarah Jenkins" class="w-full h-full object-cover" data-alt="Professional headshot of a smiling woman with dark hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcOrIQot6-c1me0WWiBMa0wLmnEcjKNysnAS4pm8GRq8_S8b2mY82bjDlr26q1E-ieh1ZsNkRT-APi9zxjxkREd_rTYW1Nzg53x4c-3duzUwr2sTUrdTVzyORyJh-hLNXEjilo5tILL6x3dzw1254VXN3P3hdhVBjO7FyVQvYtlEwq3tXLZ5C7VR_bGyvn4ddf_Dr15tcAzABVR6cAI9xxbpj3YRlUSTJsP6VsL5UAO5PRlX1H3VmRleCrd-uCE6xH43wmrX3YNsI"/>
+</div>
+<div>
+<h3 class="font-headline text-base font-bold text-on-surface">Sarah Jenkins</h3>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">Senior Field Rep</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4 flex-1">
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Visits</p>
+<p class="font-headline text-lg font-bold text-on-surface data-metric">142</p>
+<p class="text-[10px] text-secondary mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> +12%</p>
+</div>
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Leads</p>
+<p class="font-headline text-lg font-bold text-on-surface data-metric">89</p>
+<p class="text-[10px] text-secondary mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> +5%</p>
+</div>
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Sales</p>
+<p class="font-headline text-lg font-bold text-on-surface data-metric">45</p>
+<p class="text-[10px] text-secondary mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> +8%</p>
+</div>
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Revenue</p>
+<p class="font-headline text-lg font-bold text-primary data-metric">$24.5k</p>
+<p class="text-[10px] text-secondary mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> +15%</p>
+</div>
+</div>
+<div class="mt-auto border-t border-outline-variant/10 pt-3">
+<div class="flex items-center justify-between text-xs text-on-surface-variant mb-2">
+<span>Performance Trend</span>
+<span class="text-secondary">Excellent</span>
+</div>
+<!-- CSS Sparkline representation -->
+<div class="w-full h-8 flex items-end gap-1">
+<div class="w-1/6 bg-primary/30 h-1/3 rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/40 h-1/2 rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/50 h-[40%] rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/70 h-3/4 rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/80 h-[85%] rounded-t-sm"></div>
+<div class="w-1/6 bg-secondary h-full rounded-t-sm shadow-[0_0_8px_rgba(83,221,252,0.5)]"></div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="glass-panel rounded-xl p-5 ambient-shadow flex flex-col group hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="Marcus Chen" class="w-full h-full object-cover" data-alt="Professional headshot of an Asian man wearing a business casual shirt" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd7aaBUNCel06pIYyo0I-lw3BswIZVuMBzTyMSidHzz9U8PUOCnFtE8AdAY-zFStVPIeWZdLDfTaO4n5psgHmAQS0oQZwsdlcCTCv4wbTfF5gUfmHHjoEzZNo2jxRHf6-0TyfnyW6TwvBciaNpXSn0THhJjKErGK_PrZlzPgBCNJTp6tvcWiduPngQIPnB1-DBKnIJ7JkeTfCGBqRcFjAGnqe6vgW5WO19oFvvUY9z4JITb1LdR08a8XkoA47-HuGszw_GgFhQUsg"/>
+</div>
+<div>
+<h3 class="font-headline text-base font-bold text-on-surface">Marcus Chen</h3>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-surface-container-highest text-on-surface-variant border border-outline-variant/30">Field Rep II</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4 flex-1">
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Visits</p>
+<p class="font-headline text-lg font-bold text-on-surface data-metric">118</p>
+<p class="text-[10px] text-error mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_down</span> -2%</p>
+</div>
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Leads</p>
+<p class="font-headline text-lg font-bold text-on-surface data-metric">64</p>
+<p class="text-[10px] text-secondary mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> +1%</p>
+</div>
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Sales</p>
+<p class="font-headline text-lg font-bold text-on-surface data-metric">28</p>
+<p class="text-[10px] text-secondary mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> +4%</p>
+</div>
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Revenue</p>
+<p class="font-headline text-lg font-bold text-primary data-metric">$18.2k</p>
+<p class="text-[10px] text-secondary mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> +6%</p>
+</div>
+</div>
+<div class="mt-auto border-t border-outline-variant/10 pt-3">
+<div class="flex items-center justify-between text-xs text-on-surface-variant mb-2">
+<span>Performance Trend</span>
+<span class="text-on-surface-variant">Stable</span>
+</div>
+<div class="w-full h-8 flex items-end gap-1">
+<div class="w-1/6 bg-primary/30 h-[45%] rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/30 h-[40%] rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/40 h-[50%] rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/40 h-[48%] rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/50 h-[55%] rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/60 h-[60%] rounded-t-sm"></div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="glass-panel rounded-xl p-5 ambient-shadow flex flex-col group hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="Elena Rodriguez" class="w-full h-full object-cover" data-alt="Professional headshot of a Latina woman with glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDg9NouMZQNbwdEioX1YkQX5UySCyezRgDj3n5Fn5zq0n4y1_gcLwun5qPdl1kmRxZPYpECrH7OZzYN6JG8ELS1V61DmpY7pjeZux5lW7aaWZIiomDsuPjCjzwnr1pQ_WJpKei5vvxbyJ2d-00XcMFJkG8do3IQ_49cuZGxfUlq3ghQtnruj9kSg54m0fKnV8VWZAh-bpxZkej47s4wngloahXqfHwinnvR39zZ4c6Rv_pMltaKDjmBl3y7S-cWlUg0CqbglDRRfpQ"/>
+</div>
+<div>
+<h3 class="font-headline text-base font-bold text-on-surface">Elena Rodriguez</h3>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-surface-container-highest text-on-surface-variant border border-outline-variant/30">Field Rep I</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4 flex-1">
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Visits</p>
+<p class="font-headline text-lg font-bold text-on-surface data-metric">156</p>
+<p class="text-[10px] text-secondary mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> +22%</p>
+</div>
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Leads</p>
+<p class="font-headline text-lg font-bold text-on-surface data-metric">112</p>
+<p class="text-[10px] text-secondary mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> +18%</p>
+</div>
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Sales</p>
+<p class="font-headline text-lg font-bold text-on-surface data-metric">31</p>
+<p class="text-[10px] text-error mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_down</span> -5%</p>
+</div>
+<div class="bg-surface-container-low/50 rounded-lg p-3">
+<p class="text-xs text-on-surface-variant mb-1 font-label">Revenue</p>
+<p class="font-headline text-lg font-bold text-primary data-metric">$12.4k</p>
+<p class="text-[10px] text-error mt-1 flex items-center"><span class="material-symbols-outlined text-[12px]">trending_down</span> -2%</p>
+</div>
+</div>
+<div class="mt-auto border-t border-outline-variant/10 pt-3">
+<div class="flex items-center justify-between text-xs text-on-surface-variant mb-2">
+<span>Performance Trend</span>
+<span class="text-tertiary">Volatile</span>
+</div>
+<div class="w-full h-8 flex items-end gap-1">
+<div class="w-1/6 bg-primary/20 h-[30%] rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/40 h-[60%] rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/70 h-[90%] rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/30 h-[40%] rounded-t-sm"></div>
+<div class="w-1/6 bg-primary/50 h-[70%] rounded-t-sm"></div>
+<div class="w-1/6 bg-tertiary h-[45%] rounded-t-sm shadow-[0_0_8px_rgba(255,109,175,0.5)]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Detailed KPI Table -->
+<div class="glass-panel rounded-xl overflow-hidden ambient-shadow">
+<div class="px-6 py-4 border-b border-outline-variant/15 flex justify-between items-center bg-surface-container-low/30">
+<h2 class="font-headline text-lg font-bold text-on-surface">Comprehensive KPI Directory</h2>
+<button class="text-sm text-primary hover:text-primary-fixed transition-colors flex items-center gap-1 font-medium">
+                    View All <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-xs text-on-surface-variant font-label uppercase tracking-wider bg-surface-container-lowest/50">
+<th class="px-6 py-4 font-medium flex items-center gap-1 cursor-pointer hover:text-on-surface">Employee <span class="material-symbols-outlined text-[14px]">arrow_drop_down</span></th>
+<th class="px-6 py-4 font-medium cursor-pointer hover:text-on-surface">Territory</th>
+<th class="px-6 py-4 font-medium cursor-pointer hover:text-on-surface text-right">Total Visits</th>
+<th class="px-6 py-4 font-medium cursor-pointer hover:text-on-surface text-right">Conv. Rate</th>
+<th class="px-6 py-4 font-medium cursor-pointer hover:text-on-surface text-right">Avg Deal Size</th>
+<th class="px-6 py-4 font-medium cursor-pointer hover:text-on-surface text-right">Total Revenue</th>
+<th class="px-6 py-4 font-medium text-center">Status</th>
+</tr>
+</thead>
+<tbody class="text-sm divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-highest/30 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img alt="Sarah" class="w-full h-full object-cover" data-alt="Small headshot of Sarah Jenkins" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ94W-qGfEGEXNVw_qUciLONKDZjXJbs6vuCuNFrnL6kHCnu0hsiwLefVzwBHq0ldzUrwky5cvjvQ8TeVxxMj6Tt70ILGjkMlcLkxfvB4zqQVMUU8RrYpvYLGjFS9d5AQ4UYw7mH3zrjBX4qcPKi2KgeTlBSPRS9TnoKSJ8dMc_b_KDZiQkiPl2PuBZwr6wOmp6VRZq_W1O2SfYpHzekX7JCWZU1zUNNNU-kJzswvFNS7aWH-Fq2Poka3arSVQpP6q-W14dTM-up0"/>
+</div>
+<span class="font-medium text-on-surface">Sarah Jenkins</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Northwest Region</td>
+<td class="px-6 py-4 text-right data-metric">142</td>
+<td class="px-6 py-4 text-right data-metric text-secondary">31.6%</td>
+<td class="px-6 py-4 text-right data-metric">$544.44</td>
+<td class="px-6 py-4 text-right font-medium data-metric">$24,500</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-block w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(83,221,252,0.6)]"></span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest/30 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img alt="Marcus" class="w-full h-full object-cover" data-alt="Small headshot of Marcus Chen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1TuBKZ-g2K1TyAjObfqznYRgsnyQ5TravIbYfDOyr2xNLv1SU7rSty4MnsWRX71KL5KoyNozctdXK7NjOvwv-Yb8epkBXbPbclVUF1IyrBLG5-WZ3qGs4y8Fo2-S1nmfkxqa07u27Ycj0S5c1TmD1IA0-laq41jLakKiSl14Rq1_BrDek5UfBu-GbKmoAnmB-iJqqJRSHkM4d8tSlBan73sdcZdiCwPgB4G1K4c1tWVlgeJly0NjFb0-Z9KIPc1d9WVBJAt3HZGk"/>
+</div>
+<span class="font-medium text-on-surface">Marcus Chen</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Central District</td>
+<td class="px-6 py-4 text-right data-metric">118</td>
+<td class="px-6 py-4 text-right data-metric">23.7%</td>
+<td class="px-6 py-4 text-right data-metric">$650.00</td>
+<td class="px-6 py-4 text-right font-medium data-metric">$18,200</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-block w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(189,157,255,0.6)]"></span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest/30 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img alt="Elena" class="w-full h-full object-cover" data-alt="Small headshot of Elena Rodriguez" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwTcAruIAMnW_N5c7GPzX3YG0zLTgg2CjL1frbqG-c5mAwAnGfS9minKNXW1PrYjTvIKGeOjI72NkFMWgH5hrVo0gRFqDGRopWABuG9vExApsDjC48gcRVKFivBP1Dlif3PRk2UBkChvZVnMmU5Y7Y6jFmxsZfUBbFJAwvSDal5V-qoYMq9D20i6Vx9VAwXxTULvFAjDK1ySE22m9n0Br4vdiPZ7OSlQARUTyuYg5NxirXN1OeCkMMFTBYeNc9CQj8g_uQM0Kmlnw"/>
+</div>
+<span class="font-medium text-on-surface">Elena Rodriguez</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">South Metro</td>
+<td class="px-6 py-4 text-right data-metric">156</td>
+<td class="px-6 py-4 text-right data-metric text-error">19.8%</td>
+<td class="px-6 py-4 text-right data-metric">$400.00</td>
+<td class="px-6 py-4 text-right font-medium data-metric">$12,400</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-block w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_rgba(255,109,175,0.6)]"></span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest/30 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest flex items-center justify-center text-xs font-bold text-primary">
+                                        JD
+                                    </div>
+<span class="font-medium text-on-surface">James Donovan</span>
+</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">East Coast</td>
+<td class="px-6 py-4 text-right data-metric">94</td>
+<td class="px-6 py-4 text-right data-metric">28.5%</td>
+<td class="px-6 py-4 text-right data-metric">$710.20</td>
+<td class="px-6 py-4 text-right font-medium data-metric">$19,100</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-block w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(189,157,255,0.6)]"></span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-3 border-t border-outline-variant/15 flex justify-between items-center text-xs text-on-surface-variant bg-surface-container-lowest/30">
+<span>Showing 1-4 of 42 Employees</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded flex items-center justify-center hover:bg-surface-container-high transition-colors disabled:opacity-50" disabled=""><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+<button class="w-8 h-8 rounded flex items-center justify-center bg-primary/20 text-primary font-medium">1</button>
+<button class="w-8 h-8 rounded flex items-center justify-center hover:bg-surface-container-high transition-colors">2</button>
+<button class="w-8 h-8 rounded flex items-center justify-center hover:bg-surface-container-high transition-colors">3</button>
+<button class="w-8 h-8 rounded flex items-center justify-center hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

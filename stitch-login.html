@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MarketPro Admin - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ff8cbc",
+                        "primary": "#bd9dff",
+                        "tertiary": "#ff6daf",
+                        "secondary-dim": "#40ceed",
+                        "inverse-primary": "#742fe5",
+                        "inverse-on-surface": "#545367",
+                        "on-secondary": "#004b58",
+                        "secondary-fixed": "#65e1ff",
+                        "on-tertiary-fixed-variant": "#740044",
+                        "on-primary-fixed-variant": "#390083",
+                        "error": "#ff6e84",
+                        "surface-container-low": "#111124",
+                        "outline": "#757388",
+                        "surface-dim": "#0c0c1d",
+                        "tertiary-container": "#fa53a4",
+                        "on-primary-fixed": "#000000",
+                        "on-surface": "#e6e3fb",
+                        "tertiary-fixed-dim": "#ff73b1",
+                        "surface-bright": "#2a2a43",
+                        "primary-fixed": "#b28cff",
+                        "on-surface-variant": "#aba9bf",
+                        "background": "#0c0c1d",
+                        "primary-fixed-dim": "#a67aff",
+                        "on-error-container": "#ffb2b9",
+                        "on-tertiary-fixed": "#37001d",
+                        "surface-container-lowest": "#000000",
+                        "primary-container": "#b28cff",
+                        "primary-dim": "#8a4cfc",
+                        "outline-variant": "#474659",
+                        "surface-container-highest": "#23233b",
+                        "secondary-fixed-dim": "#48d4f3",
+                        "on-primary-container": "#2e006c",
+                        "surface-tint": "#bd9dff",
+                        "tertiary-dim": "#ff67ad",
+                        "on-tertiary-container": "#2f0018",
+                        "on-secondary-fixed-variant": "#005969",
+                        "surface-variant": "#23233b",
+                        "surface-container": "#18182b",
+                        "secondary": "#53ddfc",
+                        "surface-container-high": "#1d1d33",
+                        "on-tertiary": "#4b002a",
+                        "error-container": "#a70138",
+                        "inverse-surface": "#fcf8ff",
+                        "on-secondary-fixed": "#003a45",
+                        "on-primary": "#3c0089",
+                        "secondary-container": "#00687a",
+                        "on-error": "#490013",
+                        "on-background": "#e6e3fb",
+                        "error-dim": "#d73357",
+                        "surface": "#0c0c1d",
+                        "on-secondary-container": "#ecfaff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .liquid-orb-primary {
+            background: radial-gradient(circle, rgba(138, 76, 252, 0.4) 0%, rgba(12, 12, 29, 0) 70%);
+        }
+        .liquid-orb-secondary {
+            background: radial-gradient(circle, rgba(64, 206, 237, 0.3) 0%, rgba(12, 12, 29, 0) 70%);
+        }
+        .liquid-orb-tertiary {
+            background: radial-gradient(circle, rgba(250, 83, 164, 0.3) 0%, rgba(12, 12, 29, 0) 70%);
+        }
+    </style>
+</head>
+<body class="bg-[#080818] text-on-surface font-body min-h-screen relative overflow-hidden flex items-center justify-center">
+<!-- Ambient Background Orbs -->
+<div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] liquid-orb-primary rounded-full blur-[100px] z-0 pointer-events-none"></div>
+<div class="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] liquid-orb-secondary rounded-full blur-[120px] z-0 pointer-events-none"></div>
+<div class="absolute top-[40%] right-[10%] w-[400px] h-[400px] liquid-orb-tertiary rounded-full blur-[80px] z-0 pointer-events-none"></div>
+<!-- Login Container -->
+<main class="relative z-10 w-full max-w-md px-6">
+<!-- Glassmorphism Card -->
+<div class="bg-white/[0.03] backdrop-blur-[40px] border border-outline-variant/20 rounded-[2rem] p-10 shadow-[0_0_60px_rgba(138,76,252,0.08)]">
+<!-- Header Section -->
+<div class="text-center mb-10">
+<div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/[0.05] border border-outline-variant/15 mb-6 shadow-[0_0_30px_rgba(189,157,255,0.15)]">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="hub">hub</span>
+</div>
+<h1 class="font-headline font-bold text-3xl text-on-surface tracking-tight mb-2">MarketPro</h1>
+<p class="font-label text-on-surface-variant text-sm">Admin Portal</p>
+</div>
+<!-- Login Form -->
+<form action="#" class="space-y-6" method="POST">
+<!-- Email Field -->
+<div class="space-y-2">
+<label class="font-label text-xs font-medium text-on-surface-variant uppercase tracking-wider" for="email">Work Email</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant group-focus-within:text-primary transition-colors text-lg" data-icon="mail">mail</span>
+</div>
+<input class="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl py-3.5 pl-11 pr-4 text-sm text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 focus:shadow-[0_0_15px_rgba(83,221,252,0.2)] transition-all" id="email" name="email" placeholder="admin@marketpro.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="font-label text-xs font-medium text-on-surface-variant uppercase tracking-wider" for="password">Password</label>
+<a class="font-label text-xs text-primary hover:text-tertiary transition-colors" href="#">Recover Access</a>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant group-focus-within:text-primary transition-colors text-lg" data-icon="lock">lock</span>
+</div>
+<input class="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl py-3.5 pl-11 pr-11 text-sm text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 focus:shadow-[0_0_15px_rgba(83,221,252,0.2)] transition-all" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-4 flex items-center text-on-surface-variant hover:text-on-surface focus:outline-none" type="button">
+<span class="material-symbols-outlined text-lg" data-icon="visibility_off">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Remember & Auto-Detect (Visual Only) -->
+<div class="flex items-center justify-between pt-2">
+<label class="flex items-center space-x-3 cursor-pointer">
+<div class="relative flex items-center">
+<input class="peer h-5 w-5 rounded border border-outline-variant/40 bg-surface-container-low text-primary focus:ring-primary/30 focus:ring-offset-0 appearance-none checked:bg-primary checked:border-primary transition-all" type="checkbox"/>
+<span class="material-symbols-outlined absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[14px] text-surface-dim opacity-0 peer-checked:opacity-100 pointer-events-none" data-icon="check" data-weight="fill">check</span>
+</div>
+<span class="font-label text-sm text-on-surface-variant">Stay signed in</span>
+</label>
+<div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-secondary/10 border border-secondary/20">
+<div class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></div>
+<span class="font-label text-[10px] text-secondary font-medium uppercase tracking-wider">SSO Active</span>
+</div>
+</div>
+<!-- Submit Button -->
+<div class="pt-6">
+<button class="relative w-full overflow-hidden rounded-xl bg-gradient-to-br from-[#bd9dff] via-[#ff6daf] to-[#53ddfc] p-[1px] group transition-all duration-300 hover:shadow-[0_0_25px_rgba(189,157,255,0.4)]" type="submit">
+<div class="absolute inset-0 bg-gradient-to-br from-[#bd9dff] via-[#ff6daf] to-[#53ddfc] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="relative w-full bg-surface-dim/80 backdrop-blur-md rounded-[11px] py-3.5 px-6 flex items-center justify-center space-x-2 group-hover:bg-transparent transition-colors duration-300">
+<span class="font-headline font-bold text-sm text-on-surface group-hover:text-surface-dim transition-colors duration-300">Sign In</span>
+<span class="material-symbols-outlined text-on-surface group-hover:text-surface-dim transition-colors duration-300 text-sm" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</button>
+</div>
+</form>
+<!-- Footer / Support -->
+<div class="mt-8 text-center border-t border-outline-variant/10 pt-6">
+<p class="font-label text-xs text-on-surface-variant">
+                    Require assistance? <a class="text-primary hover:text-primary-fixed transition-colors" href="#">Contact IT Support</a>
+</p>
+<div class="mt-4 flex items-center justify-center space-x-4 opacity-50">
+<div class="h-4 border-r border-outline-variant"></div>
+<span class="font-label text-[10px] text-on-surface-variant tracking-widest uppercase">Secure Env v2.4</span>
+<div class="h-4 border-r border-outline-variant"></div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

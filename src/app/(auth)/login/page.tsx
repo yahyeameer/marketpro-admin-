@@ -3,16 +3,25 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Waypoints } from "lucide-react";
+import { login } from "./actions";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorStatus, setErrorStatus] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    // TODO: Supabase auth integration
-    setTimeout(() => setIsLoading(false), 2000);
+    setErrorStatus(null);
+    
+    const formData = new FormData(e.currentTarget);
+    const result = await login(formData);
+    
+    if (result?.error) {
+      setErrorStatus(result.error);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -49,6 +58,11 @@ export default function LoginPage() {
           </div>
 
           {/* Login Form */}
+          {errorStatus && (
+            <div className="mb-6 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-center">
+               <p className="text-xs text-red-400">{errorStatus}</p>
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div className="space-y-2">

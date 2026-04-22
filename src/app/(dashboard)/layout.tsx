@@ -1,5 +1,7 @@
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { TopNavbar } from "@/components/dashboard/top-navbar";
+import { SidebarProvider } from "@/components/dashboard/sidebar-provider";
+import { UserProvider } from "@/components/providers/user-provider";
 
 export default function DashboardLayout({
   children,
@@ -15,14 +17,18 @@ export default function DashboardLayout({
         <div className="absolute top-[40%] left-[30%] w-[40vw] h-[40vw] rounded-full bg-[#ff6daf] opacity-[0.15] blur-[120px]" />
       </div>
 
-      <Sidebar />
-      <TopNavbar />
+      <UserProvider>
+        <SidebarProvider>
+          <Sidebar />
+          <TopNavbar />
 
-      <main className="pl-[240px] pt-16 min-h-screen">
-        <div className="p-8 max-w-[1600px] mx-auto space-y-8">
-          {children}
-        </div>
-      </main>
+          <main className="lg:pl-[240px] pt-16 min-h-screen transition-all duration-300">
+            <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto space-y-6 md:space-y-8">
+              {children}
+            </div>
+          </main>
+        </SidebarProvider>
+      </UserProvider>
     </>
   );
 }

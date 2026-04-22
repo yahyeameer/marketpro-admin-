@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Users,
   Radar,
@@ -16,71 +16,269 @@ import {
   Filter,
   ChevronLeft,
   ChevronRight,
+  Shield,
+  Eye,
+  EyeOff,
+  MapPin,
+  CreditCard,
+  UserPlus,
+  BadgeCheck,
+  FileBarChart,
+  UserCog,
+  Settings,
+  LayoutDashboard,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { useUser } from "@/components/providers/user-provider";
+import { logActivity } from "@/lib/utils/log-activity";
 
-const usersData = [
-  {
-    id: "1",
-    name: "Sarah Jenkins",
-    email: "sarah.j@marketpro.com",
-    avatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBhm5NV-lzwdu1UL4PAIjbIx4FIM2_7PksfS0xNK-45RLwIG1aZbfZFffyRnXnkD-Pfk3Pa-62Pr6bUX2WQPAueGMSf5iie42sULxQJ7gFZmBq-E7McSWmgi5AuU-AvPhrPDIOxL41OrVIzmrySeeEdo53T1FLhEXu4CwXwu9-7we6HhkdDSnUpyFswcxx2unXlgfMPyCvp5hC33PFhBSaJZv6pAOskrIXgEtZ-B3FesVqDAVBbLfoIwS07giQIN2o270O5njGhKHA",
-    role: "Admin",
-    roleColor: "bg-[#bd9dff]/10 text-[#bd9dff] border-[#bd9dff]/20",
-    status: "Active",
-    statusBadge: "bg-[#40ceed] shadow-[0_0_5px_rgba(64,206,237,0.8)]",
-    statusColor: "text-[#e6e3fb]",
-    lastLogin: "Just now",
-  },
-  {
-    id: "2",
-    name: "Marcus Chen",
-    email: "m.chen@marketpro.com",
-    avatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBRc1mAQlgKuZSls_lDrZwI1gowvUecZseGpnuLx1Zz5oUzOtKu2IhfAoAHjrZF32pFIUURW_DzMuWyH25zSuzgWmkcYCRIUbs5xiLsPXrVA2lBvP9AExTP_FmeO-EFwH9uMTu9eS_Goj88_gowr_bk-OH1V8D-JgGxHDxl6MWyiaF8rnUiXeWTcXMAFSKLytLb7eW3W5pi9zoOmkd74KRmTW2UXDNwI_EkScQBpk8jf_0-jyfWsiORfYLPsBJfaA8JX3a3jL8mh_Y",
-    role: "Manager",
-    roleColor: "bg-[#53ddfc]/10 text-[#53ddfc] border-[#53ddfc]/20",
-    status: "Active",
-    statusBadge: "bg-[#40ceed] shadow-[0_0_5px_rgba(64,206,237,0.8)]",
-    statusColor: "text-[#e6e3fb]",
-    lastLogin: "2 hrs ago",
-  },
-  {
-    id: "3",
-    name: "Elena Diaz",
-    email: "elena.d@marketpro.com",
-    initials: "ED",
-    role: "Field Marketer",
-    roleColor: "bg-[#ff6daf]/10 text-[#ff6daf] border-[#ff6daf]/20",
-    status: "Offline",
-    statusBadge: "bg-[#757388]",
-    statusColor: "text-[#aba9bf]",
-    lastLogin: "1 day ago",
-  },
-  {
-    id: "4",
-    name: "David Kim",
-    email: "dkim@marketpro.com",
-    avatar:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCd9-XU80O0v8k2BEweSRcoAuVvbG2bOQ6R11ox3JtOS9CN_2QcJ6IeRqwzgSQ9DjjWVot__TdZEgH4IMsxJ-qSzUayodK3U217wL65zVVZYvG9MLF1lL3sN2uAYxGdktEMVE86x_JkJdzoDDy6lyLZ51obC-W73ZHn3NMYXvhrCyWqXAZUU3I3IabJiMRBPJ-Nxenv4EWTCJhfo9fvpgUwarxsBjUQO6ZxrTVSXpoQ1XVA0SoxSj3jtCd84yluD8rTj0g7lWPxzMc",
-    role: "Sales Agent",
-    roleColor: "bg-[#40ceed]/10 text-[#40ceed] border-[#40ceed]/20",
-    status: "Suspended",
-    statusBadge: "bg-[#d73357]",
-    statusColor: "text-[#d73357]",
-    lastLogin: "Oct 12, 2023",
-  },
+interface UserRow {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  created_at: string;
+}
+
+interface Permission {
+  id: string;
+  page_slug: string;
+  is_visible: boolean;
+}
+
+const roleConfig: Record<string, { color: string }> = {
+  admin: { color: "bg-[#bd9dff]/10 text-[#bd9dff] border-[#bd9dff]/20" },
+  manager: { color: "bg-[#53ddfc]/10 text-[#53ddfc] border-[#53ddfc]/20" },
+};
+
+const pageConfig = [
+  { slug: "/dashboard", label: "Dashboard", icon: LayoutDashboard, locked: true },
+  { slug: "/visits", label: "Field Visits", icon: MapPin, locked: false },
+  { slug: "/sales", label: "Sales", icon: CreditCard, locked: false },
+  { slug: "/leads", label: "Leads", icon: UserPlus, locked: false },
+  { slug: "/employees", label: "Employees", icon: BadgeCheck, locked: false },
+  { slug: "/reports", label: "Reports", icon: FileBarChart, locked: false },
+  { slug: "/users", label: "User Mgmt", icon: UserCog, locked: false },
+  { slug: "/settings", label: "Settings", icon: Settings, locked: false },
 ];
 
+function PermissionModal({
+  targetUser,
+  onClose,
+  currentUserId,
+}: {
+  targetUser: UserRow;
+  onClose: () => void;
+  currentUserId: string;
+}) {
+  const [permissions, setPermissions] = useState<Permission[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState<string | null>(null);
+
+  const fetchPermissions = useCallback(async () => {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("user_permissions")
+      .select("id, page_slug, is_visible")
+      .eq("user_id", targetUser.id);
+    if (data) setPermissions(data);
+    setLoading(false);
+  }, [targetUser.id]);
+
+  useEffect(() => {
+    fetchPermissions();
+  }, [fetchPermissions]);
+
+  const togglePermission = async (pageSlug: string) => {
+    const perm = permissions.find((p) => p.page_slug === pageSlug);
+    if (!perm) return;
+
+    const newValue = !perm.is_visible;
+    setSaving(pageSlug);
+
+    // Optimistic update
+    setPermissions((prev) =>
+      prev.map((p) =>
+        p.page_slug === pageSlug ? { ...p, is_visible: newValue } : p
+      )
+    );
+
+    const supabase = createClient();
+    await supabase
+      .from("user_permissions")
+      .update({ is_visible: newValue })
+      .eq("id", perm.id);
+
+    // Log activity
+    await logActivity(
+      currentUserId,
+      newValue ? "granted_access" : "revoked_access",
+      "permission",
+      perm.id,
+      { page: pageSlug, target_user: targetUser.name, visible: newValue }
+    );
+
+    setSaving(null);
+  };
+
+  const isVisible = (slug: string) => {
+    const perm = permissions.find((p) => p.page_slug === slug);
+    return perm?.is_visible ?? true;
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0c0c1d]/80 backdrop-blur-sm">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="w-full max-w-lg rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(189,157,255,0.08)] relative bg-[#18182b] border border-[#474659]/30"
+      >
+        {/* Modal Orb */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#bd9dff]/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+
+        {/* Header */}
+        <div className="p-6 border-b border-white/5 flex justify-between items-center relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-[#bd9dff]/10">
+              <Shield className="w-5 h-5 text-[#bd9dff]" />
+            </div>
+            <div>
+              <h3 className="font-heading text-lg font-bold text-[#e6e3fb]">
+                Page Permissions
+              </h3>
+              <p className="text-xs text-[#aba9bf]">
+                {targetUser.name} — {targetUser.role}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-[#aba9bf] hover:text-[#e6e3fb] transition-colors p-1 rounded-full hover:bg-white/5"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Permission Grid */}
+        <div className="p-6 space-y-3 relative z-10">
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="w-6 h-6 border-2 border-[#bd9dff]/30 border-t-[#bd9dff] rounded-full animate-spin" />
+            </div>
+          ) : (
+            pageConfig.map((page) => {
+              const Icon = page.icon;
+              const visible = isVisible(page.slug);
+              const isSaving = saving === page.slug;
+
+              return (
+                <div
+                  key={page.slug}
+                  className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-200 ${
+                    visible
+                      ? "bg-white/[0.03] border-[#474659]/20"
+                      : "bg-[#ff6e84]/5 border-[#ff6e84]/10"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon
+                      className={`w-4 h-4 ${
+                        visible ? "text-[#bd9dff]" : "text-[#aba9bf]/50"
+                      }`}
+                    />
+                    <span
+                      className={`text-sm font-medium ${
+                        visible ? "text-[#e6e3fb]" : "text-[#aba9bf]/60 line-through"
+                      }`}
+                    >
+                      {page.label}
+                    </span>
+                    {page.locked && (
+                      <span className="text-[9px] text-[#53ddfc] bg-[#53ddfc]/10 px-1.5 py-0.5 rounded-full font-medium uppercase tracking-wider">
+                        Required
+                      </span>
+                    )}
+                  </div>
+
+                  {page.locked ? (
+                    <div className="flex items-center gap-1.5 text-[10px] text-[#aba9bf]/60">
+                      <Eye className="w-3.5 h-3.5" />
+                      Always On
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => togglePermission(page.slug)}
+                      disabled={isSaving}
+                      className={`relative w-11 h-6 rounded-full transition-all duration-300 ${
+                        visible
+                          ? "bg-[#bd9dff]/30 border border-[#bd9dff]/40"
+                          : "bg-[#23233b] border border-[#474659]/30"
+                      }`}
+                    >
+                      <div
+                        className={`absolute top-0.5 w-5 h-5 rounded-full transition-all duration-300 flex items-center justify-center ${
+                          visible
+                            ? "left-[22px] bg-[#bd9dff] shadow-[0_0_8px_rgba(189,157,255,0.5)]"
+                            : "left-0.5 bg-[#474659]"
+                        }`}
+                      >
+                        {isSaving ? (
+                          <div className="w-3 h-3 border border-white/50 border-t-white rounded-full animate-spin" />
+                        ) : visible ? (
+                          <Eye className="w-3 h-3 text-white" />
+                        ) : (
+                          <EyeOff className="w-3 h-3 text-[#aba9bf]" />
+                        )}
+                      </div>
+                    </button>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 border-t border-white/5 flex justify-end bg-[#000000]/30 relative z-10">
+          <button
+            onClick={onClose}
+            className="bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] px-6 py-2.5 rounded-lg text-sm font-semibold text-[#0c0c1d] hover:shadow-[0_0_20px_rgba(189,157,255,0.4)] transition-all"
+          >
+            Done
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function UsersPage() {
+  const { user: currentUser } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [permTarget, setPermTarget] = useState<UserRow | null>(null);
+  const [usersData, setUsersData] = useState<UserRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchUsers() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("users")
+        .select("id, name, email, role, created_at")
+        .order("created_at", { ascending: true });
+      if (data) setUsersData(data);
+      setLoading(false);
+    }
+    fetchUsers();
+  }, []);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="p-6 lg:p-8 xl:p-10 relative z-10 flex flex-col min-h-[calc(100vh-64px)]"
+      className="relative z-10 flex flex-col min-h-[calc(100vh-64px)]"
     >
       {/* Liquid Light Orbs */}
       <div
@@ -91,7 +289,7 @@ export default function UsersPage() {
         }}
       />
       <div
-        className="fixed bottom-[-200px] left-[100px] w-[800px] h-[800px] rounded-full pointer-events-none z-0 blur-[80px]"
+        className="fixed bottom-[-200px] left-[100px] w-[800px] h-[800px] rounded-full pointer-events-none z-0 blur-[60px]"
         style={{
           background:
             "radial-gradient(circle, rgba(250, 83, 164, 0.1) 0%, rgba(250, 83, 164, 0) 70%)",
@@ -127,61 +325,52 @@ export default function UsersPage() {
 
         {/* Metric Cards Bento */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 shrink-0">
-          {/* Card 1 */}
           <div className="bg-white/[0.03] backdrop-blur-[32px] border border-[#474659]/30 rounded-xl p-6 relative overflow-hidden group hover:bg-white/5 transition-colors shadow-[0_4px_60px_rgba(138,76,252,0.04)]">
             <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#bd9dff]/10 rounded-full blur-2xl group-hover:bg-[#bd9dff]/20 transition-all" />
             <div className="flex justify-between items-start mb-4">
-              <span className="text-[#aba9bf] text-sm font-medium">
-                Total Users
-              </span>
+              <span className="text-[#aba9bf] text-sm font-medium">Total Users</span>
               <span className="text-[#bd9dff]/70 bg-[#bd9dff]/10 p-1.5 rounded-md">
                 <Users className="w-4 h-4" />
               </span>
             </div>
             <div className="font-heading text-3xl font-bold tracking-tight text-[#e6e3fb] font-mono">
-              1,248
+              {usersData.length}
             </div>
             <div className="mt-2 text-xs text-[#53ddfc] flex items-center font-medium">
               <TrendingUp className="w-3 h-3 mr-1" />
-              +12% from last month
+              Live count
             </div>
           </div>
 
-          {/* Card 2 */}
           <div className="bg-white/[0.03] backdrop-blur-[32px] border border-[#474659]/30 rounded-xl p-6 relative overflow-hidden group hover:bg-white/5 transition-colors shadow-[0_4px_60px_rgba(138,76,252,0.04)]">
             <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#53ddfc]/10 rounded-full blur-2xl group-hover:bg-[#53ddfc]/20 transition-all" />
             <div className="flex justify-between items-start mb-4">
-              <span className="text-[#aba9bf] text-sm font-medium">
-                Active Sessions
-              </span>
+              <span className="text-[#aba9bf] text-sm font-medium">Admins</span>
               <span className="text-[#53ddfc]/70 bg-[#53ddfc]/10 p-1.5 rounded-md">
                 <Radar className="w-4 h-4" />
               </span>
             </div>
             <div className="font-heading text-3xl font-bold tracking-tight text-[#e6e3fb] font-mono">
-              342
+              {usersData.filter((u) => u.role === "admin").length}
             </div>
             <div className="mt-2 text-xs text-[#aba9bf] flex items-center font-medium">
-              Currently online
+              Full access users
             </div>
           </div>
 
-          {/* Card 3 */}
           <div className="bg-white/[0.03] backdrop-blur-[32px] border border-[#474659]/30 rounded-xl p-6 relative overflow-hidden group hover:bg-white/5 transition-colors shadow-[0_4px_60px_rgba(138,76,252,0.04)]">
             <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#ff6e84]/10 rounded-full blur-2xl group-hover:bg-[#ff6e84]/20 transition-all" />
             <div className="flex justify-between items-start mb-4">
-              <span className="text-[#aba9bf] text-sm font-medium">
-                Pending Approvals
-              </span>
+              <span className="text-[#aba9bf] text-sm font-medium">Managers</span>
               <span className="text-[#ff6e84]/70 bg-[#ff6e84]/10 p-1.5 rounded-md">
                 <Hourglass className="w-4 h-4" />
               </span>
             </div>
             <div className="font-heading text-3xl font-bold tracking-tight text-[#e6e3fb] font-mono">
-              18
+              {usersData.filter((u) => u.role === "manager").length}
             </div>
-            <div className="mt-2 text-xs text-[#d73357] flex items-center font-medium">
-              Action required
+            <div className="mt-2 text-xs text-[#aba9bf] flex items-center font-medium">
+              Limited access users
             </div>
           </div>
         </div>
@@ -202,100 +391,89 @@ export default function UsersPage() {
                 <tr className="border-b border-white/5 text-xs text-[#aba9bf] uppercase tracking-wider bg-[#111124]/30">
                   <th className="py-4 px-6 font-medium">User</th>
                   <th className="py-4 px-6 font-medium">Role</th>
-                  <th className="py-4 px-6 font-medium">Status</th>
-                  <th className="py-4 px-6 font-medium">Last Login</th>
+                  <th className="py-4 px-6 font-medium hidden md:table-cell">Joined</th>
                   <th className="py-4 px-6 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-white/5">
-                {usersData.map((user) => (
-                  <tr
-                    key={user.id}
-                    className="hover:bg-white/[0.02] transition-colors group"
-                  >
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full overflow-hidden border border-[#474659]/30 shrink-0 bg-[#23233b] flex items-center justify-center">
-                          {user.avatar ? (
-                            <img
-                              src={user.avatar}
-                              alt={user.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-xs font-bold text-[#ff6daf]">
-                              {user.initials}
-                            </span>
-                          )}
-                        </div>
-                        <div>
-                          <div className="font-semibold text-[#e6e3fb]">
-                            {user.name}
-                          </div>
-                          <div className="text-xs text-[#aba9bf]">
-                            {user.email}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6">
-                      <span
-                        className={`inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${user.roleColor}`}
-                      >
-                        {user.role}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-1.5">
-                        <div
-                          className={`w-1.5 h-1.5 rounded-full ${user.statusBadge}`}
-                        />
-                        <span className={`text-xs font-medium ${user.statusColor}`}>
-                          {user.status}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 text-[#aba9bf] text-xs font-mono">
-                      {user.lastLogin}
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="text-[#aba9bf] hover:text-[#e6e3fb] transition-colors p-1">
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button className="text-[#aba9bf] hover:text-[#ff6e84] transition-colors p-1">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                {loading ? (
+                  <tr>
+                    <td colSpan={4} className="py-12 text-center text-[#aba9bf]">
+                      <div className="w-6 h-6 border-2 border-[#bd9dff]/30 border-t-[#bd9dff] rounded-full animate-spin mx-auto mb-3" />
+                      Loading users...
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  usersData.map((u) => (
+                    <tr key={u.id} className="hover:bg-white/[0.02] transition-colors group">
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full overflow-hidden border border-[#474659]/30 shrink-0 bg-gradient-to-br from-[#bd9dff] to-[#ff6daf] flex items-center justify-center">
+                            <span className="text-xs font-bold text-white">
+                              {u.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .substring(0, 2)
+                                .toUpperCase()}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-semibold text-[#e6e3fb]">{u.name}</div>
+                            <div className="text-xs text-[#aba9bf]">{u.email}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${
+                            roleConfig[u.role]?.color || "bg-[#23233b] text-[#aba9bf] border-[#474659]/20"
+                          }`}
+                        >
+                          {u.role}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-[#aba9bf] text-xs font-mono hidden md:table-cell">
+                        {new Date(u.created_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => setPermTarget(u)}
+                            className="text-[#bd9dff] hover:text-[#e6e3fb] transition-colors p-1.5 rounded-lg hover:bg-[#bd9dff]/10"
+                            title="Manage Permissions"
+                          >
+                            <Shield className="w-4 h-4" />
+                          </button>
+                          <button className="text-[#aba9bf] hover:text-[#e6e3fb] transition-colors p-1.5 rounded-lg hover:bg-white/5">
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button className="text-[#aba9bf] hover:text-[#ff6e84] transition-colors p-1.5 rounded-lg hover:bg-[#ff6e84]/10">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
           <div className="p-4 border-t border-white/5 flex items-center justify-between text-xs text-[#aba9bf] bg-[#111124]/30">
             <div>
-              Showing <span className="font-mono text-[#e6e3fb]">1</span> to{" "}
-              <span className="font-mono text-[#e6e3fb]">4</span> of{" "}
-              <span className="font-mono text-[#e6e3fb]">1,248</span> results
+              Showing <span className="font-mono text-[#e6e3fb]">{usersData.length}</span> users
             </div>
             <div className="flex items-center gap-1">
-              <button
-                disabled
-                className="p-1 hover:text-[#e6e3fb] hover:bg-white/5 rounded disabled:opacity-50"
-              >
+              <button disabled className="p-1 hover:text-[#e6e3fb] hover:bg-white/5 rounded disabled:opacity-50">
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button className="w-6 h-6 rounded bg-[#bd9dff]/20 text-[#bd9dff] font-medium flex items-center justify-center">
                 1
               </button>
-              <button className="w-6 h-6 rounded hover:bg-white/5 hover:text-[#e6e3fb] flex items-center justify-center">
-                2
-              </button>
-              <button className="w-6 h-6 rounded hover:bg-white/5 hover:text-[#e6e3fb] flex items-center justify-center">
-                3
-              </button>
-              <span className="px-1 text-[#aba9bf]">...</span>
               <button className="p-1 hover:text-[#e6e3fb] hover:bg-white/5 rounded">
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -304,7 +482,7 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* Overlay Modal for Add User */}
+      {/* Add User Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0c0c1d]/80 backdrop-blur-sm">
           <motion.div
@@ -313,7 +491,6 @@ export default function UsersPage() {
             exit={{ opacity: 0, scale: 0.95 }}
             className="w-full max-w-lg rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(189,157,255,0.08)] relative bg-[#18182b] border border-[#474659]/30"
           >
-            {/* Modal specific orb */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#bd9dff]/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
 
             <div className="p-6 border-b border-white/5 flex justify-between items-center relative z-10">
@@ -331,9 +508,7 @@ export default function UsersPage() {
             <div className="p-6 space-y-5 relative z-10">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-[#aba9bf]">
-                    First Name
-                  </label>
+                  <label className="text-xs font-medium text-[#aba9bf]">First Name</label>
                   <input
                     type="text"
                     placeholder="Jane"
@@ -341,9 +516,7 @@ export default function UsersPage() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-[#aba9bf]">
-                    Last Name
-                  </label>
+                  <label className="text-xs font-medium text-[#aba9bf]">Last Name</label>
                   <input
                     type="text"
                     placeholder="Doe"
@@ -353,9 +526,7 @@ export default function UsersPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#aba9bf]">
-                  Email Address
-                </label>
+                <label className="text-xs font-medium text-[#aba9bf]">Email Address</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 text-[#aba9bf] w-4 h-4" />
                   <input
@@ -367,20 +538,14 @@ export default function UsersPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#aba9bf]">
-                  Role Assignment
-                </label>
+                <label className="text-xs font-medium text-[#aba9bf]">Role Assignment</label>
                 <select
                   defaultValue=""
                   className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all cursor-pointer"
                 >
-                  <option disabled value="">
-                    Select a role...
-                  </option>
+                  <option disabled value="">Select a role...</option>
                   <option value="admin">Admin</option>
                   <option value="manager">Manager</option>
-                  <option value="field">Field Marketer</option>
-                  <option value="sales">Sales Agent</option>
                 </select>
               </div>
             </div>
@@ -398,6 +563,15 @@ export default function UsersPage() {
             </div>
           </motion.div>
         </div>
+      )}
+
+      {/* Permission Modal */}
+      {permTarget && currentUser && (
+        <PermissionModal
+          targetUser={permTarget}
+          onClose={() => setPermTarget(null)}
+          currentUserId={currentUser.id}
+        />
       )}
     </motion.div>
   );

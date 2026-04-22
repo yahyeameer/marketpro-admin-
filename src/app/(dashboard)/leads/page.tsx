@@ -1,234 +1,256 @@
 "use client";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus, Clock, CheckCircle, Mail, MoreHorizontal, X, MessageSquare, Phone } from "lucide-react";
 
-import { motion } from "framer-motion";
-import { Plus, User, Clock, CheckCircle2, Mail, Archive } from "lucide-react";
+export type LeadStatus = "inbound" | "converted" | "lost";
 
-export default function LeadsPage() {
+export interface Lead {
+  id: string;
+  companyName: string;
+  timeAgo: string;
+  contactName: string;
+  contactRole: string;
+  notes: string;
+  status: LeadStatus;
+  assigneeInitials?: string;
+  actionText?: string;
+  actionIcon?: "schedule" | "mail" | "archive" | "handover";
+  value?: string;
+  reason?: string;
+}
+
+function AddLeadModal({ onClose, onSave }: { onClose: () => void; onSave: () => void }) {
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ company: "", contact: "", role: "", notes: "", status: "inbound" as LeadStatus });
+
+  const handleSubmit = async () => {
+    if (!form.company || !form.contact) return;
+    setSaving(true);
+    
+    // We need to create a dummy user to assign or just not use one.
+    // Ideally leads are just entries, but the schema says leads relies on `visit_id`.
+    // Let's create a stub field_visit first, then link it to the lead.
+    const supabase = createClient();
+    
+    // 1. Get first user as assignee
+    const { data: users } = await supabase.from("users").select("id").limit(1);
+    const userId = users?.[0]?.id;
+
+    if (!userId) {
+      setSaving(false);
+      return;
+    }
+
+    // 2. Create visit stub
+    const { data: visitData, error: visitError } = await supabase.from("field_visits").insert({
+      user_id: userId,
+      company: form.company,
+      contact: `${form.contact}, ${form.role}`,
+      notes: form.notes,
+      status: "lead",
+      visit_date: new Date().toISOString()
+    }).select("id").single();
+
+    if (!visitError && visitData) {
+      // 3. Create lead
+      await supabase.from("leads").insert({
+        visit_id: visitData.id,
+        status: form.status
+      });
+      onSave();
+    }
+    setSaving(false);
+  };
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="p-6 lg:p-8 xl:p-10 relative z-10"
-    >
-      {/* Liquid Light Orbs (Background) */}
-      <div
-        className="fixed top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full pointer-events-none z-0 blur-[60px]"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(64, 206, 237, 0.2) 0%, rgba(12, 12, 29, 0) 70%)",
-        }}
-      />
-      <div
-        className="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full pointer-events-none z-0 blur-[60px]"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(250, 83, 164, 0.15) 0%, rgba(12, 12, 29, 0) 70%)",
-        }}
-      />
-
-      {/* Main Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto h-[calc(100vh-140px)] flex flex-col">
-        {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 shrink-0">
-          <div>
-            <h2 className="text-3xl font-heading font-bold text-[#e6e3fb] mb-2">
-              Lead Pipeline
-            </h2>
-            <p className="text-[#aba9bf] text-sm max-w-xl">
-              Track and manage prospective clients through the sales cycle. High
-              priority targets are highlighted.
-            </p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0c0c1d]/80 backdrop-blur-sm">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(189,157,255,0.08)] relative bg-[#18182b] border border-[#474659]/30">
+        <div className="p-6 border-b border-white/5 flex justify-between items-center relative z-10">
+          <h3 className="font-heading text-lg font-bold text-[#e6e3fb]">Add New Lead</h3>
+          <button onClick={onClose} className="text-[#aba9bf] hover:text-[#e6e3fb] p-1 rounded-full"><X className="w-5 h-5" /></button>
+        </div>
+        <div className="p-6 space-y-4 relative z-10">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-[#aba9bf]">Company Name *</label>
+            <input value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} type="text" className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:outline-none focus:border-[#53ddfc]" />
           </div>
-          <button className="px-5 py-2.5 rounded-full bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] text-[#000000] font-heading font-semibold text-sm hover:shadow-[0_0_20px_rgba(189,157,255,0.4)] transition-all duration-300 flex items-center gap-2 shrink-0">
-            <Plus className="w-5 h-5" />
-            New Lead
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-[#aba9bf]">Contact Name *</label>
+              <input value={form.contact} onChange={(e) => setForm({ ...form, contact: e.target.value })} type="text" className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:outline-none focus:border-[#53ddfc]" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-[#aba9bf]">Role</label>
+              <input value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} type="text" className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:outline-none focus:border-[#53ddfc]" />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-[#aba9bf]">Status</label>
+            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as LeadStatus })} className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:outline-none focus:border-[#53ddfc]">
+              <option value="inbound">Inbound</option>
+              <option value="converted">Converted</option>
+              <option value="lost">Lost</option>
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-[#aba9bf]">Notes</label>
+            <input value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} type="text" className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:outline-none focus:border-[#53ddfc]" />
+          </div>
+        </div>
+        <div className="p-6 border-t border-white/5 flex justify-end gap-3 bg-[#000000]/30 relative z-10">
+          <button onClick={onClose} className="px-5 py-2.5 rounded-lg text-sm font-medium text-[#e6e3fb] hover:bg-white/5">Cancel</button>
+          <button onClick={handleSubmit} disabled={saving || !form.company || !form.contact} className="bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] px-6 py-2.5 rounded-lg text-sm font-semibold text-[#0c0c1d]">
+            {saving ? "Saving..." : "Add Lead"}
           </button>
         </div>
+      </motion.div>
+    </div>
+  );
+}
 
-        {/* Kanban Board */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-0">
-          {/* Column 1: Inbound Leads */}
-          <div className="flex flex-col bg-white/[0.03] rounded-[2rem] p-4 backdrop-blur-[32px] border border-[#474659]/30 shadow-[0_0_60px_rgba(138,76,252,0.08)] h-full overflow-hidden">
-            <div className="flex items-center justify-between mb-4 px-2 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-[#40ceed] shadow-[0_0_10px_rgba(64,206,237,0.5)]" />
-                <h3 className="font-heading font-bold text-[#e6e3fb] text-lg">
-                  Inbound Leads
-                </h3>
-              </div>
-              <span className="bg-[#23233b] text-[#aba9bf] text-xs font-bold font-mono px-2.5 py-1 rounded-full">
-                24
-              </span>
-            </div>
-            <div className="flex-1 overflow-y-auto pr-2 space-y-4 pb-4 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20 scrollbar-track-transparent">
-              {/* Card 1 */}
-              <div className="bg-[#1d1d33] rounded-xl p-5 border border-[#474659]/30 hover:border-[#40ceed]/50 transition-colors cursor-grab relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 h-full bg-[#40ceed] opacity-50 group-hover:opacity-100 transition-opacity" />
-                <div className="flex justify-between items-start mb-3">
-                  <h4 className="font-heading font-bold text-[#e6e3fb]">
-                    Acme Corp Global
-                  </h4>
-                  <span className="text-xs font-mono text-[#aba9bf]">2h ago</span>
-                </div>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 rounded-full bg-[#bd9dff]/10 flex items-center justify-center border border-[#bd9dff]/20">
-                    <User className="w-3 h-3 text-[#bd9dff]" />
-                  </div>
-                  <span className="text-sm text-[#aba9bf]">
-                    Sarah Jenkins, VP Growth
-                  </span>
-                </div>
-                <p className="text-xs text-[#aba9bf] mb-4 line-clamp-2 italic">
-                  Requested a demo regarding enterprise features. specifically
-                  interested in API integration...
-                </p>
-                <div className="flex justify-between items-center pt-3 border-t border-white/5">
-                  <div className="flex -space-x-2">
-                    <img
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOOb5W6DPpXShUU2P5CByrEKy1Ies5NRyGs2E_SblHOHKjwUg6tld1sR5V0fEvA9gVgvLIrlolWEwkY-4-gHAZNl2fcY3qlPpnoEcKS-h35QbxEYKJQT_H61Qc5h1IEgNu9rBFoguGjaQ23tfTb1sLlhJdt_NwuBj4JfehT0f4IitzRqOp4z-1p8lIbBH_2nefY82yjCZOQWdb2HC-a-Qo9zHuNsvA3W9BpEPJNlnej4J109yvKFfUL-XinbQB8fb2sEhR57OhhRc"
-                      alt="Agent"
-                      className="w-6 h-6 rounded-full border border-[#1d1d33] z-10"
-                    />
-                  </div>
-                  <span className="text-xs font-medium text-[#40ceed] flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> Follow up today
-                  </span>
-                </div>
-              </div>
+function LeadCard({ lead }: { lead: Lead }) {
+  const isConverted = lead.status === "converted";
+  const isLost = lead.status === "lost";
 
-              {/* Card 2 */}
-              <div className="bg-[#1d1d33] rounded-xl p-5 border border-[#474659]/30 hover:border-[#40ceed]/50 transition-colors cursor-grab relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1 h-full bg-[#23233b] group-hover:bg-[#40ceed]/50 transition-colors" />
-                <div className="flex justify-between items-start mb-3">
-                  <h4 className="font-heading font-bold text-[#e6e3fb]">
-                    Nexus Technologies
-                  </h4>
-                  <span className="text-xs font-mono text-[#aba9bf]">1d ago</span>
-                </div>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 rounded-full bg-[#23233b] flex items-center justify-center border border-[#474659]/30">
-                    <User className="w-3 h-3 text-[#aba9bf]" />
-                  </div>
-                  <span className="text-sm text-[#aba9bf]">David Chen, CTO</span>
-                </div>
-                <p className="text-xs text-[#aba9bf] mb-4 line-clamp-2 italic">
-                  Initial contact via webinar registration. Needs technical deep
-                  dive.
-                </p>
-                <div className="flex justify-between items-center pt-3 border-t border-white/5">
-                  <div className="flex -space-x-2">
-                    <div className="w-6 h-6 rounded-full bg-[#23233b] border border-[#1d1d33] z-10 flex items-center justify-center text-[10px] text-[#e6e3fb] font-bold">
-                      MK
-                    </div>
-                  </div>
-                  <span className="text-xs font-medium text-[#aba9bf] flex items-center gap-1">
-                    <Mail className="w-3 h-3" /> Sent info packet
-                  </span>
-                </div>
-              </div>
-            </div>
+  return (
+    <motion.div
+      layoutId={lead.id}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`bg-[#1d1d33] rounded-xl p-5 border border-[#474659]/20 transition-colors relative overflow-hidden group 
+        ${isLost ? "opacity-75 grayscale-[30%]" : "hover:border-[#40ceed]/50 cursor-grab"}
+        ${isConverted ? "opacity-90" : ""}
+      `}
+    >
+      <div className={`absolute top-0 left-0 w-1 h-full transition-all duration-300 ${isConverted ? "bg-[#00687a]" : isLost ? "bg-[#ff6e84]/50" : "bg-[#23233b] group-hover:bg-[#40ceed]/50"}`} />
+
+      <div className="flex justify-between items-start mb-3">
+        <h4 className={`font-heading font-bold text-[#e6e3fb] ${isLost ? "line-through decoration-[#ff6e84]/50" : ""}`}>{lead.companyName}</h4>
+        <span className="text-xs font-mono text-[#aba9bf]">{lead.timeAgo}</span>
+      </div>
+
+      <div className="flex items-center gap-2 mb-4">
+        {isConverted ? (
+           <div className="w-6 h-6 rounded-full bg-[#00687a]/20 flex items-center justify-center border border-[#00687a]/30"><CheckCircle className="w-3.5 h-3.5 text-[#53ddfc]" /></div>
+        ) : (
+          <div className="w-6 h-6 rounded-full bg-[#23233b] flex items-center justify-center border border-[#474659]/30">
+            <svg className="w-3.5 h-3.5 text-[#aba9bf]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
           </div>
+        )}
+        <span className="text-sm text-[#aba9bf] font-body">{lead.contactName} {lead.contactRole ? `, ${lead.contactRole}` : ""}</span>
+      </div>
 
-          {/* Column 2: Converted */}
-          <div className="flex flex-col bg-white/[0.03] rounded-[2rem] p-4 backdrop-blur-[32px] border border-[#474659]/30 shadow-[0_0_60px_rgba(138,76,252,0.08)] h-full overflow-hidden">
-            <div className="flex items-center justify-between mb-4 px-2 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-[#00687a] shadow-[0_0_10px_rgba(0,104,122,0.5)]" />
-                <h3 className="font-heading font-bold text-[#e6e3fb] text-lg">
-                  Converted
-                </h3>
-              </div>
-              <span className="bg-[#23233b] text-[#aba9bf] text-xs font-bold font-mono px-2.5 py-1 rounded-full">
-                12
-              </span>
-            </div>
-            <div className="flex-1 overflow-y-auto pr-2 space-y-4 pb-4 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20 scrollbar-track-transparent">
-              {/* Card 3 */}
-              <div className="bg-[#1d1d33] rounded-xl p-5 border border-[#474659]/30 relative overflow-hidden opacity-90">
-                <div className="absolute top-0 left-0 w-1 h-full bg-[#00687a]" />
-                <div className="flex justify-between items-start mb-3">
-                  <h4 className="font-heading font-bold text-[#e6e3fb]">
-                    Vanguard Logistics
-                  </h4>
-                  <span className="text-xs font-mono text-[#aba9bf]">Oct 12</span>
-                </div>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 rounded-full bg-[#00687a]/20 flex items-center justify-center border border-[#00687a]/30">
-                    <CheckCircle2 className="w-3 h-3 text-[#53ddfc]" />
-                  </div>
-                  <span className="text-sm text-[#aba9bf]">Contract Signed</span>
-                </div>
-                <div className="bg-black/50 rounded-lg p-3 mb-4 flex justify-between items-center">
-                  <span className="text-xs text-[#aba9bf]">Deal Value</span>
-                  <span className="text-sm font-bold font-mono text-[#bd9dff]">
-                    $45,000
-                  </span>
-                </div>
-                <div className="flex justify-between items-center pt-3 border-t border-white/5">
-                  <div className="flex -space-x-2">
-                    <img
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd7D4GQcZLNdsOgOGQ62n7T0xwh6mgCy0ZPzeDAolDypDfVmdFi5zIryhMD8nv5vodmEy5aOhhJadp0PxibH88zCJpppkgXr3Fdlx-rl-TWyz-eLHFO5W0uEzGGzu_EWYeFGCRanLyS4eT-yIa5atxd2G3HIyq3eV_TxCY6QlRKnspXxraoygrnAJkvBRcZXdg8BVNTnfcjb9k_hqour0RYUSEoYSCvmh96U7YMXVqeCaawj8YxfrsT_L3rN4JBPRml7n5v4Ruo-s"
-                      alt="Agent"
-                      className="w-6 h-6 rounded-full border border-[#1d1d33] z-10"
-                    />
-                  </div>
-                  <span className="text-xs font-medium text-[#aba9bf]">
-                    Handed to CSM
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+      {!isConverted && !isLost && lead.notes && <p className="text-xs text-[#aba9bf] font-body mb-4 line-clamp-2 italic">{lead.notes}</p>}
 
-          {/* Column 3: Lost */}
-          <div className="flex flex-col bg-white/[0.03] rounded-[2rem] p-4 backdrop-blur-[32px] border border-[#474659]/30 shadow-[0_0_60px_rgba(138,76,252,0.08)] h-full overflow-hidden">
-            <div className="flex items-center justify-between mb-4 px-2 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-[#ff6e84] shadow-[0_0_10px_rgba(255,110,132,0.5)]" />
-                <h3 className="font-heading font-bold text-[#e6e3fb] text-lg">
-                  Lost
-                </h3>
+      <div className="flex justify-between items-center pt-3 border-t border-white/5">
+        <div className="flex -space-x-2">
+           {lead.assigneeInitials && (
+              <div className="w-6 h-6 rounded-full bg-[#23233b] border border-[#1d1d33] z-10 flex items-center justify-center text-[10px] text-[#e6e3fb] font-bold">
+                {lead.assigneeInitials}
               </div>
-              <span className="bg-[#23233b] text-[#aba9bf] text-xs font-bold font-mono px-2.5 py-1 rounded-full">
-                8
-              </span>
-            </div>
-            <div className="flex-1 overflow-y-auto pr-2 space-y-4 pb-4 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20 scrollbar-track-transparent">
-              {/* Card 4 */}
-              <div className="bg-[#1d1d33] rounded-xl p-5 border border-[#474659]/30 relative overflow-hidden opacity-75 grayscale-[30%]">
-                <div className="absolute top-0 left-0 w-1 h-full bg-[#ff6e84]/50" />
-                <div className="flex justify-between items-start mb-3">
-                  <h4 className="font-heading font-bold text-[#e6e3fb] line-through decoration-[#ff6e84]/50">
-                    Starlight Retail
-                  </h4>
-                  <span className="text-xs font-mono text-[#aba9bf]">Sep 28</span>
-                </div>
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="text-sm text-[#aba9bf]">
-                    Marcus Thorne, CEO
-                  </span>
-                </div>
-                <p className="text-xs text-[#d73357] mb-4 italic bg-[#a70138]/10 p-2 rounded border border-[#a70138]/20">
-                  Reason: Budget constraints for Q4. Follow up in Q1 next year.
-                </p>
-                <div className="flex justify-between items-center pt-3 border-t border-white/5">
-                  <div className="flex -space-x-2">
-                    <img
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfY_iTLDRJ8_LYINrqGTiEmIe4PMGprxQHk8GHlz-GvNUMHueudhzWPIAo4_zYkMjvCxYwFot81Sab-2WBdVbLC1dFI1Bi3PDQJERHF-lrcwx8SyAkSGZjExINzqBW7YlLn5554vqeKHaP5-6TYxLNdzu8zqsIQQMx66TX69-2N2PTu-DAtVORZ-RCyzdkyP-eF1YV_eyEXgEJecQqK1lQ6QT9kunHoZDCrjXIwcoN7xF1Z_IrXGOw4V0-rxemhN01-EUZFaMi6_Y"
-                      alt="Agent"
-                      className="w-6 h-6 rounded-full border border-[#1d1d33] z-10"
-                    />
-                  </div>
-                  <span className="text-xs font-medium text-[#aba9bf] flex items-center gap-1">
-                    <Archive className="w-3 h-3" /> Archived
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+           )}
         </div>
+        <span className={`text-xs font-medium flex items-center gap-1 ${lead.status === "inbound" ? "text-[#40ceed]" : "text-[#aba9bf]"}`}>
+          {lead.actionIcon === "schedule" && <Clock className="w-3.5 h-3.5" />}
+          {lead.actionIcon === "mail" && <Mail className="w-3.5 h-3.5" />}
+          {lead.actionIcon === "archive" && <MoreHorizontal className="w-3.5 h-3.5" />}
+          {lead.actionIcon === "handover" && <CheckCircle className="w-3.5 h-3.5" />}
+          {lead.actionText}
+        </span>
       </div>
     </motion.div>
+  );
+}
+
+export default function LeadsPage() {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const supabase = createClient();
+
+  const fetchLeads = async () => {
+    const { data } = await supabase.from("leads").select(`
+      id, status, created_at,
+      field_visits ( company, contact, notes, users ( name ) )
+    `);
+
+    if (data) {
+      const mappedLeads: Lead[] = data.map((lead: any) => {
+        const visit = lead.field_visits;
+        const companyName = visit?.company || "Unknown Company";
+        
+        let contactName = visit?.contact || "Unknown Contact";
+        let contactRole = "";
+        if (visit?.contact?.includes(",")) {
+           const parts = visit.contact.split(",");
+           contactName = parts[0];
+           contactRole = parts[1]?.trim() || "";
+        }
+
+        const assigneeName = visit?.users?.name || "";
+        const assigneeInitials = assigneeName.split(" ").map((n: string) => n[0]).join("") || "UNK";
+
+        const diffDays = Math.floor(Math.abs(new Date().getTime() - new Date(lead.created_at).getTime()) / (1000 * 60 * 60 * 24));
+        const timeAgo = diffDays > 0 ? `${diffDays}d ago` : "Today";
+
+        return {
+          id: lead.id,
+          companyName,
+          timeAgo,
+          contactName,
+          contactRole,
+          notes: visit?.notes || "",
+          status: lead.status as LeadStatus,
+          assigneeInitials,
+          actionText: lead.status === "inbound" ? "Follow up today" : lead.status === "converted" ? "Handed to CSM" : "Archived",
+          actionIcon: lead.status === "inbound" ? "schedule" : lead.status === "converted" ? "handover" : "archive"
+        };
+      });
+      setLeads(mappedLeads);
+    }
+  };
+
+  useEffect(() => { fetchLeads(); }, []);
+
+  return (
+    <>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+        <div>
+          <h2 className="text-3xl font-heading font-bold text-[#e6e3fb] mb-2 tracking-tight">Lead Pipeline</h2>
+          <p className="text-[#aba9bf] font-body text-sm max-w-xl">Track and manage prospective clients through the sales cycle. High priority targets are highlighted.</p>
+        </div>
+        <button onClick={() => setShowModal(true)} className="px-5 py-2.5 rounded-full bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] text-black font-heading font-semibold text-sm flex items-center gap-2 hover:shadow-[0_0_20px_rgba(189,157,255,0.4)] transition-all">
+          <Plus className="w-5 h-5" /> New Lead
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-180px)] overflow-hidden">
+        {["inbound", "converted", "lost"].map((status) => {
+          const colLeads = leads.filter(l => l.status === status);
+          const color = status === "inbound" ? "bg-[#40ceed]" : status === "converted" ? "bg-[#00687a]" : "bg-[#ff6e84]";
+          return (
+            <div key={status} className="flex flex-col bg-[#111124]/50 rounded-[2rem] p-4 border border-[#474659]/15 shadow-[0_0_60px_rgba(138,76,252,0.05)] h-full overflow-hidden">
+              <div className="flex items-center justify-between mb-4 px-2">
+                <div className="flex items-center gap-3">
+                  <div className={`w-3 h-3 rounded-full ${color}`} />
+                  <h3 className="font-heading font-bold text-[#e6e3fb] text-lg capitalize">{status} Leads</h3>
+                </div>
+                <span className="bg-[#23233b] text-[#aba9bf] text-xs font-bold font-mono px-2.5 py-1 rounded-full">{colLeads.length}</span>
+              </div>
+              <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+                {colLeads.map(lead => <LeadCard key={lead.id} lead={lead} />)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <AnimatePresence>
+        {showModal && <AddLeadModal onClose={() => setShowModal(false)} onSave={() => { setShowModal(false); fetchLeads(); }} />}
+      </AnimatePresence>
+    </>
   );
 }

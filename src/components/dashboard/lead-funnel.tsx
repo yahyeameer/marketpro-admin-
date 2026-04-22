@@ -1,21 +1,41 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
-const funnelData = [
-  { label: "Total Generated", value: "12,400", width: "100%", color: "#bd9dff" },
-  { label: "Contacted", value: "8,150", width: "65%", color: "#53ddfc" },
-  { label: "Qualified", value: "3,200", width: "25%", color: "#ff6daf" },
-  {
-    label: "Converted",
-    value: "842",
-    width: "8%",
-    color: "#48d4f3",
-    glow: "0 0 10px rgba(72, 212, 243, 0.5)",
-  },
-];
+import { createClient } from "@/lib/supabase/client";
 
 export function LeadFunnel() {
+  const [counts, setCounts] = useState({ total: 0, inbound: 0, converted: 0, lost: 0 });
+
+  useEffect(() => {
+    async function fetchCounts() {
+      const supabase = createClient();
+      const { data } = await supabase.from("leads").select("status");
+      if (data) {
+        setCounts({
+          total: data.length,
+          inbound: data.filter((l) => l.status === "inbound").length,
+          converted: data.filter((l) => l.status === "converted").length,
+          lost: data.filter((l) => l.status === "lost").length,
+        });
+      }
+    }
+    fetchCounts();
+  }, []);
+
+  const funnelData = [
+    { label: "Total Generated", value: counts.total.toLocaleString(), width: "100%", color: "#bd9dff" },
+    { label: "Inbound / Active", value: counts.inbound.toLocaleString(), width: counts.total > 0 ? `${Math.round((counts.inbound / counts.total) * 100)}%` : "0%", color: "#53ddfc" },
+    { label: "Converted", value: counts.converted.toLocaleString(), width: counts.total > 0 ? `${Math.max(8, Math.round((counts.converted / counts.total) * 100))}%` : "0%", color: "#ff6daf" },
+    {
+      label: "Lost",
+      value: counts.lost.toLocaleString(),
+      width: counts.total > 0 ? `${Math.max(5, Math.round((counts.lost / counts.total) * 100))}%` : "0%",
+      color: "#ff6e84",
+      glow: "0 0 10px rgba(255,110,132,0.3)",
+    },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

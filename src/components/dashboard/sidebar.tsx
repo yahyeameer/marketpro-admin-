@@ -13,6 +13,9 @@ import {
   Settings,
 } from "lucide-react";
 
+import { useSidebar } from "./sidebar-provider";
+import { useUser } from "@/components/providers/user-provider";
+
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/visits", label: "Field Visits", icon: MapPin },
@@ -26,29 +29,47 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { isOpen, close } = useSidebar();
+  const { isAllowed } = useUser();
 
   return (
-    <nav className="fixed left-0 top-0 bottom-0 z-40 flex flex-col bg-white/5 backdrop-blur-xl w-[240px] h-screen border-r border-white/10 font-heading text-sm font-medium shadow-[0_0_40px_rgba(124,58,237,0.08)]">
-      {/* Header */}
-      <div className="h-20 flex items-center px-6 border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#bd9dff] to-[#ff6daf] flex items-center justify-center shrink-0">
-            <LayoutDashboard className="w-4 h-4 text-white" />
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden" 
+          onClick={close} 
+        />
+      )}
+
+      {/* Sidebar Navigation */}
+      <nav className={`fixed left-0 top-0 bottom-0 z-50 flex flex-col bg-[#0c0c1d]/90 backdrop-blur-xl w-[240px] h-screen border-r border-white/10 font-heading text-sm font-medium shadow-[0_0_40px_rgba(124,58,237,0.08)] transition-transform duration-300 ease-in-out lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        {/* Header */}
+        <div className="h-16 md:h-20 flex items-center justify-between px-6 border-b border-white/5 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#bd9dff] to-[#ff6daf] flex items-center justify-center shrink-0">
+              <LayoutDashboard className="w-4 h-4 text-white" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xl font-bold tracking-tighter text-white leading-none">
+                MarketPro
+              </span>
+              <span className="text-[10px] text-white/50 uppercase tracking-widest mt-1">
+                Admin Console
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-tighter text-white leading-none">
-              MarketPro
-            </span>
-            <span className="text-[10px] text-white/50 uppercase tracking-widest mt-1">
-              Admin Console
-            </span>
-          </div>
+          <button 
+            onClick={close} 
+            className="p-1 -mr-2 text-white/50 hover:text-white rounded-lg lg:hidden"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
         </div>
-      </div>
 
       {/* Navigation Links */}
       <div className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-        {navItems.map((item) => {
+        {navItems.filter((item) => isAllowed(item.href)).map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
 
@@ -56,6 +77,7 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={close}
               className={`
                 relative flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300
                 ${
@@ -74,5 +96,6 @@ export function Sidebar() {
         })}
       </div>
     </nav>
+    </>
   );
 }

@@ -1,29 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
-const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
-const yLabels = ["$150k", "$100k", "$50k", "$0"];
-
-// Revenue data points (normalized 0-200 for SVG viewBox)
-const dataPoints = [
-  { x: 0, y: 100 },
-  { x: 167, y: 110 },
-  { x: 333, y: 80 },
-  { x: 500, y: 140 },
-  { x: 667, y: 120 },
-  { x: 833, y: 60 },
-  { x: 1000, y: 30 },
-];
-
-const linePath = dataPoints.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
-const areaPath = `${linePath} L1000,200 L0,200 Z`;
-
-const timeRanges = ["1M", "3M", "1Y"];
+import { createClient } from "@/lib/supabase/client";
 
 export function RevenueChart() {
-  const [activeRange, setActiveRange] = useState("1M");
+  const [activeRange, setActiveRange] = useState("All");
+  const [chartData, setChartData] = useState<{ month: string; revenue: number }[]>([]);
+  const [maxRev, setMaxRev] = useState(1);
+
+  useEffect(() => {
+    async function fetchRevenue() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("sales")
+        .select("price, sale_date")
+        .order("sale_date", { ascending: true });
+
+      if (data && data.length > 0) {
+        // Group by month
+        const monthMap = new Map<string, number>();
+        data.forEach((s: any) => {
+          const d = new Date(s.sale_date);
+          const key = d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+          monthMap.set(key, (monthMap.get(key) || 0) + Number(s.price || 0));
+        });
+
+        const entries = Array.from(monthMap.entries()).map(([month, revenue]) => ({
+          month,
+          revenue,
+        }));
+        setChartData(entries);
+        setMaxRev(Math.max(...entries.map((e) => e.revenue), 1));
+      }
+    }
+    fetchRevenue();
+  }, []);
+
+  const timeRanges = ["All", "3M", "1M"];
+
+  // Build SVG path from real data
+  const points = chartData.map((d, i) => ({
+    x: chartData.length > 1 ? (i / (chartData.length - 1)) * 1000 : 500,
+    y: 200 - (d.revenue / maxRev) * 180,
+  }));
+
+  const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
+  const areaPath = points.length > 0 ? `${linePath} L1000,200 L0,200 Z` : "";
+
+  const yMax = maxRev;
+  const yLabels = [
+    `$${(yMax / 1000).toFixed(0)}k`,
+    `$${((yMax * 0.66) / 1000).toFixed(0)}k`,
+    `$${((yMax * 0.33) / 1000).toFixed(0)}k`,
+    "$0",
+  ];
 
   return (
     <motion.div
@@ -39,7 +70,7 @@ export function RevenueChart() {
             Monthly Revenue Trend
           </h2>
           <p className="text-sm text-[#aba9bf] mt-1">
-            Real-time aggregation across all regions.
+            Real-time aggregation across all sales.
           </p>
         </div>
         <div className="flex p-1 rounded-lg border border-[#474659]/15 bg-white/[0.03] backdrop-blur-[32px]">
@@ -77,36 +108,41 @@ export function RevenueChart() {
 
         {/* SVG Chart */}
         <div className="absolute left-12 right-0 top-0 h-full pb-8">
-          <svg
-            className="overflow-visible"
-            width="100%"
-            height="100%"
-            viewBox="0 0 1000 200"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <linearGradient id="chart-gradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#53ddfc" stopOpacity="1" />
-                <stop offset="100%" stopColor="#53ddfc" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            {/* Gradient fill area */}
-            <path d={areaPath} fill="url(#chart-gradient)" opacity="0.3" />
-            {/* Neon line */}
-            <path
-              d={linePath}
-              fill="none"
-              stroke="#53ddfc"
-              strokeWidth="3"
-              style={{ filter: "drop-shadow(0 0 8px #53ddfc)" }}
-            />
-          </svg>
+          {chartData.length > 0 ? (
+            <svg
+              className="overflow-visible"
+              width="100%"
+              height="100%"
+              viewBox="0 0 1000 200"
+              preserveAspectRatio="none"
+            >
+              <defs>
+                <linearGradient id="chart-gradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#53ddfc" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#53ddfc" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d={areaPath} fill="url(#chart-gradient)" opacity="0.3" />
+              <path
+                d={linePath}
+                fill="none"
+                stroke="#53ddfc"
+                strokeWidth="3"
+                style={{ filter: "drop-shadow(0 0 8px #53ddfc)" }}
+              />
+            </svg>
+          ) : (
+            <div className="flex items-center justify-center h-full text-sm text-[#aba9bf]">
+              <div className="w-5 h-5 border-2 border-[#53ddfc]/30 border-t-[#53ddfc] rounded-full animate-spin mr-3" />
+              Loading chart data...
+            </div>
+          )}
         </div>
 
         {/* X Axis Labels */}
         <div className="absolute left-12 right-0 bottom-0 flex justify-between text-xs text-[#aba9bf] font-mono">
-          {months.map((month) => (
-            <span key={month}>{month}</span>
+          {chartData.map((d) => (
+            <span key={d.month}>{d.month}</span>
           ))}
         </div>
       </div>

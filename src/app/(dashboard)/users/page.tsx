@@ -31,6 +31,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { useUser } from "@/components/providers/user-provider";
 import { logActivity } from "@/lib/utils/log-activity";
+import { useCustomRoles } from "@/lib/hooks/use-custom-roles";
 
 interface UserRow {
   id: string;
@@ -46,10 +47,7 @@ interface Permission {
   is_visible: boolean;
 }
 
-const roleConfig: Record<string, { color: string }> = {
-  admin: { color: "bg-[#bd9dff]/10 text-[#bd9dff] border-[#bd9dff]/20" },
-  manager: { color: "bg-[#53ddfc]/10 text-[#53ddfc] border-[#53ddfc]/20" },
-};
+// roleConfig is now dynamic based on custom roles hook, so we remove the static one
 
 const pageConfig = [
   { slug: "/dashboard", label: "Dashboard", icon: LayoutDashboard, locked: true },
@@ -259,6 +257,7 @@ export default function UsersPage() {
   const [permTarget, setPermTarget] = useState<UserRow | null>(null);
   const [usersData, setUsersData] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const { roles } = useCustomRoles();
 
   useEffect(() => {
     async function fetchUsers() {
@@ -309,7 +308,7 @@ export default function UsersPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="bg-white/[0.03] backdrop-blur-[32px] border border-[#474659]/30 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-white/10 transition-colors text-[#e6e3fb]">
+            <button onClick={() => alert("Filter drawer opening...")} className="bg-white/[0.03] backdrop-blur-[32px] border border-[#474659]/30 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-white/10 transition-colors text-[#e6e3fb]">
               <Filter className="w-4 h-4" />
               Filter
             </button>
@@ -381,7 +380,7 @@ export default function UsersPage() {
             <h2 className="font-heading text-lg font-semibold text-[#e6e3fb]">
               Directory
             </h2>
-            <button className="text-[#aba9bf] hover:text-[#e6e3fb] p-1 rounded transition-colors">
+            <button onClick={() => alert("Opening directory options...")} className="text-[#aba9bf] hover:text-[#e6e3fb] p-1 rounded transition-colors">
               <MoreVertical className="w-4 h-4" />
             </button>
           </div>
@@ -427,10 +426,10 @@ export default function UsersPage() {
                       <td className="py-4 px-6">
                         <span
                           className={`inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${
-                            roleConfig[u.role]?.color || "bg-[#23233b] text-[#aba9bf] border-[#474659]/20"
+                            roles.find(r => r.id === u.role)?.color || "bg-[#23233b] text-[#aba9bf] border-[#474659]/20"
                           }`}
                         >
-                          {u.role}
+                          {roles.find(r => r.id === u.role)?.name || u.role}
                         </span>
                       </td>
                       <td className="py-4 px-6 text-[#aba9bf] text-xs font-mono hidden md:table-cell">
@@ -449,10 +448,10 @@ export default function UsersPage() {
                           >
                             <Shield className="w-4 h-4" />
                           </button>
-                          <button className="text-[#aba9bf] hover:text-[#e6e3fb] transition-colors p-1.5 rounded-lg hover:bg-white/5">
+                          <button onClick={() => alert(`Edit ${u.name}'s profile`)} className="text-[#aba9bf] hover:text-[#e6e3fb] transition-colors p-1.5 rounded-lg hover:bg-white/5">
                             <Edit2 className="w-4 h-4" />
                           </button>
-                          <button className="text-[#aba9bf] hover:text-[#ff6e84] transition-colors p-1.5 rounded-lg hover:bg-[#ff6e84]/10">
+                          <button onClick={() => alert(`Initiate delete for ${u.name}`)} className="text-[#aba9bf] hover:text-[#ff6e84] transition-colors p-1.5 rounded-lg hover:bg-[#ff6e84]/10">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -544,8 +543,9 @@ export default function UsersPage() {
                   className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all cursor-pointer"
                 >
                   <option disabled value="">Select a role...</option>
-                  <option value="admin">Admin</option>
-                  <option value="manager">Manager</option>
+                  {roles.map(r => (
+                    <option key={r.id} value={r.id}>{r.name}</option>
+                  ))}
                 </select>
               </div>
             </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUp, Minus } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 interface Performer {
   name: string;
@@ -82,9 +83,9 @@ export function TopPerformers() {
         <h2 className="font-heading text-lg font-bold text-[#e6e3fb]">
           Top Performers
         </h2>
-        <button className="text-sm font-medium text-[#bd9dff] hover:text-[#b28cff] transition-colors">
+        <Link href="/employees" className="text-sm font-medium text-[#bd9dff] hover:text-[#b28cff] transition-colors">
           View All
-        </button>
+        </Link>
       </div>
 
       <div className="overflow-x-auto">

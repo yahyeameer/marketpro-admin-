@@ -46,7 +46,7 @@ export function TopNavbar() {
       {/* Trailing Actions & Profile */}
       <div className="flex items-center gap-4">
         {/* Realtime Indicator */}
-        <button className="relative p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all">
+        <button onClick={() => alert("System telemetry is online.")} className="relative p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all">
           <Radio className="w-5 h-5" />
           <span className="absolute top-1 right-1 w-2 h-2 bg-[#53ddfc] rounded-full animate-pulse" />
         </button>

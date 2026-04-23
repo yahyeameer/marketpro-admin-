@@ -15,8 +15,13 @@ import {
   MapPin,
   FileText,
   ChevronDown,
+  UserCog,
+  Palette,
+  Check,
+  X
 } from "lucide-react";
 import { useActivityLog, type ActivityEntry } from "@/lib/hooks/use-activity-log";
+import { useCustomRoles } from "@/lib/hooks/use-custom-roles";
 
 const actionConfig: Record<string, { icon: typeof Activity; color: string; label: string }> = {
   granted_access: { icon: Eye, color: "text-[#4ade80]", label: "Granted Access" },
@@ -116,6 +121,124 @@ function ActivityItem({ entry }: { entry: ActivityEntry }) {
   );
 }
 
+function RoleManager() {
+  const { roles, addRole, deleteRole } = useCustomRoles();
+  const [isCreating, setIsCreating] = useState(false);
+  const [newRole, setNewRole] = useState({ name: "", colorId: "purple" });
+  const [newPerms, setNewPerms] = useState<Record<string, boolean>>({
+    dashboard: true, visits: false, sales: false, leads: false, employees: false, reports: false, users: false, settings: false
+  });
+
+  const colors = [
+    { id: "purple", value: "bg-[#bd9dff]/10 text-[#bd9dff] border-[#bd9dff]/20" },
+    { id: "cyan", value: "bg-[#53ddfc]/10 text-[#53ddfc] border-[#53ddfc]/20" },
+    { id: "pink", value: "bg-[#ff6daf]/10 text-[#ff6daf] border-[#ff6daf]/20" },
+    { id: "green", value: "bg-[#4ade80]/10 text-[#4ade80] border-[#4ade80]/20" },
+  ];
+
+  const permKeys = ["dashboard", "visits", "sales", "leads", "employees", "reports", "users", "settings"];
+
+  const handleSave = () => {
+    if (!newRole.name) return;
+    addRole({
+      id: newRole.name.toLowerCase().replace(/\s+/g, '-'),
+      name: newRole.name,
+      color: colors.find(c => c.id === newRole.colorId)?.value || colors[0].value,
+      permissions: newPerms
+    });
+    setIsCreating(false);
+    setNewRole({ name: "", colorId: "purple" });
+    setNewPerms({ dashboard: true, visits: false, sales: false, leads: false, employees: false, reports: false, users: false, settings: false });
+  };
+
+  return (
+    <div className="mb-10">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-heading text-xl font-bold text-[#e6e3fb] flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-[#bd9dff]/10">
+            <UserCog className="w-5 h-5 text-[#bd9dff]" />
+          </div>
+          Role & Permissions Configurator
+        </h2>
+        <button onClick={() => setIsCreating(!isCreating)} className="bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] text-[#0c0c1d] px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:shadow-[0_0_15px_rgba(189,157,255,0.4)] flex items-center gap-2">
+          <Plus className="w-4 h-4" />
+          Create Custom Role
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        {roles.map(role => (
+          <div key={role.id} className="bg-white/[0.03] backdrop-blur-[32px] border border-[#474659]/30 rounded-xl p-5 hover:bg-white/5 transition-colors group relative shadow-[0_4px_60px_rgba(138,76,252,0.04)]">
+            <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#bd9dff]/5 rounded-full blur-2xl group-hover:bg-[#bd9dff]/10 transition-all pointer-events-none" />
+            <div className="flex justify-between items-start mb-4 relative z-10">
+              <span className={`inline-flex px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider border ${role.color}`}>
+                {role.name}
+              </span>
+              {role.id !== 'admin' && role.id !== 'manager' && (
+                <button onClick={() => deleteRole(role.id)} className="text-[#aba9bf] hover:text-[#ff6e84] opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-white/5 rounded-md hover:bg-[#ff6e84]/20">
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-1.5 relative z-10">
+              {Object.entries(role.permissions).filter(([_, v]) => v).map(([k]) => (
+                <span key={k} className="text-[10px] bg-[#23233b] text-[#aba9bf] px-2 py-0.5 rounded-full border border-[#474659]/20 capitalize">
+                  {k}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {isCreating && (
+        <motion.div initial={{ opacity: 0, height: 0, scale: 0.98 }} animate={{ opacity: 1, height: "auto", scale: 1 }} className="bg-[#111124]/70 backdrop-blur-xl border border-[#bd9dff]/30 rounded-xl p-6 overflow-hidden relative shadow-[0_0_40px_rgba(189,157,255,0.1)]">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#bd9dff]/10 rounded-full blur-3xl pointer-events-none -mt-20 -mr-20" />
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-5">
+              <div>
+                <label className="text-xs font-medium text-[#aba9bf] mb-1.5 block">Custom Role Name</label>
+                <input value={newRole.name} onChange={e => setNewRole({...newRole, name: e.target.value})} type="text" placeholder="e.g. Sales Coordinator" className="w-full bg-[#0c0c1d] border border-white/5 rounded-lg px-4 py-2.5 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all placeholder:text-[#aba9bf]/30" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-[#aba9bf] mb-2 flex items-center gap-1"><Palette className="w-3.5 h-3.5" /> Badge Appearance</label>
+                <div className="flex gap-3">
+                  {colors.map(c => (
+                    <button key={c.id} onClick={() => setNewRole({...newRole, colorId: c.id})} className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all shadow-lg ${c.value.split(' ')[0].replace('/10', '/30')} ${newRole.colorId === c.id ? 'border-white scale-110' : 'border-transparent hover:scale-105'}`}>
+                      {newRole.colorId === c.id && <Check className="w-5 h-5 text-white" />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <label className="text-xs font-medium text-[#aba9bf] mb-3 block">Resource Access (What they can see)</label>
+              <div className="grid grid-cols-2 gap-3 bg-[#0c0c1d]/50 p-4 rounded-xl border border-white/5">
+                {permKeys.map(k => (
+                  <label key={k} className="flex items-center gap-3 cursor-pointer group p-1.5 rounded-lg hover:bg-white/5 transition-colors">
+                    <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${newPerms[k] ? 'bg-[#bd9dff] border-[#bd9dff]' : 'bg-[#0c0c1d] border-[#474659]/50 group-hover:border-[#bd9dff]/50'}`}>
+                      {newPerms[k] && <Check className="w-3.5 h-3.5 text-white" />}
+                    </div>
+                    <span className={`text-sm capitalize transition-colors ${newPerms[k] ? 'text-[#e6e3fb] font-medium' : 'text-[#aba9bf] group-hover:text-[#e6e3fb]'}`}>{k}</span>
+                    <input type="checkbox" className="hidden" checked={newPerms[k]} onChange={(e) => setNewPerms({...newPerms, [k]: e.target.checked})} disabled={k === 'dashboard'} />
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="mt-6 flex justify-end gap-3 relative z-10 border-t border-white/5 pt-5">
+            <button onClick={() => setIsCreating(false)} className="px-5 py-2.5 rounded-lg text-sm font-medium text-[#e6e3fb] hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">Cancel</button>
+            <button onClick={handleSave} className="bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] px-8 py-2.5 rounded-lg text-sm font-bold text-[#0c0c1d] hover:shadow-[0_0_20px_rgba(189,157,255,0.4)] transition-all flex items-center gap-2">
+              Generate Role
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
 export default function SettingsPage() {
   const [entityFilter, setEntityFilter] = useState("");
   const { entries, loading, hasMore, loadMore } = useActivityLog({
@@ -185,6 +308,8 @@ export default function SettingsPage() {
             </div>
           </div>
         </div>
+
+        <RoleManager />
 
         {/* Audit Log Panel */}
         <div className="bg-white/[0.03] backdrop-blur-[32px] border border-[#474659]/30 rounded-xl overflow-hidden shadow-[0_4px_60px_rgba(138,76,252,0.04)]">

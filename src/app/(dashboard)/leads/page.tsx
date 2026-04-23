@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Clock, CheckCircle, Mail, MoreHorizontal, X, MessageSquare, Phone, TrendingUp, User } from "lucide-react";
+import { Plus, Clock, CheckCircle, Mail, MoreHorizontal, X, MessageSquare, Phone, TrendingUp, User, Target, Trophy, Trash2, Edit2, Rocket } from "lucide-react";
+import { useCampaignGoals, type CampaignGoal } from "@/lib/hooks/use-campaign-goals";
 
 export type LeadStatus = "inbound" | "converted" | "lost";
 
@@ -185,9 +186,22 @@ function LeadCard({ lead }: { lead: Lead }) {
 }
 
 export default function LeadsPage() {
+  const [activeTab, setActiveTab] = useState<"pipeline" | "campaigns">("pipeline");
   const [leads, setLeads] = useState<Lead[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [showGoalModal, setShowGoalModal] = useState(false);
+  const [toast, setToast] = useState<{ message: string, type: 'success' | 'info' } | null>(null);
+  
+  const { goals, addGoal, updateProgress, deleteGoal } = useCampaignGoals();
   const supabase = createClient();
+
+  const handleUpdateGoal = (id: string, newCurrent: number) => {
+    const achievedTitle = updateProgress(id, newCurrent);
+    if (achievedTitle) {
+      setToast({ message: `🎉 Incredible! "${achievedTitle}" goal has been ACHIEVED!`, type: 'success' });
+      setTimeout(() => setToast(null), 5000);
+    }
+  };
 
   const fetchLeads = async () => {
     const { data } = await supabase.from("leads").select(`
@@ -232,45 +246,218 @@ export default function LeadsPage() {
 
   return (
     <div className="relative z-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6">
         <div>
-          <h2 className="text-4xl font-heading font-extrabold text-white mb-2 tracking-tight">Lead Pipeline</h2>
-          <p className="text-[#aba9bf] font-body text-base max-w-xl">Manage your prospects and track conversions.</p>
+          <h2 className="text-4xl font-heading font-extrabold text-white mb-2 tracking-tight">Lead Management</h2>
+          <p className="text-[#aba9bf] font-body text-base max-w-xl">Manage prospects, track conversions, and monitor street marketing campaigns.</p>
         </div>
-        <button onClick={() => setShowModal(true)} className="px-8 py-3 rounded-2xl bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] text-[#0c0c1d] font-heading font-bold text-base flex items-center gap-2 shadow-[0_10px_30px_rgba(189,157,255,0.3)] hover:shadow-[0_15px_40px_rgba(189,157,255,0.5)] transition-all">
-          <Plus className="w-6 h-6" /> New Lead
-        </button>
+        
+        <div className="flex bg-white/5 backdrop-blur-md p-1.5 rounded-2xl border border-white/10">
+          <button 
+            onClick={() => setActiveTab("pipeline")}
+            className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${activeTab === "pipeline" ? "bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] text-[#0c0c1d] shadow-[0_0_20px_rgba(189,157,255,0.3)]" : "text-[#aba9bf] hover:text-white"}`}
+          >
+            Pipeline
+          </button>
+          <button 
+            onClick={() => setActiveTab("campaigns")}
+            className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${activeTab === "campaigns" ? "bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] text-[#0c0c1d] shadow-[0_0_20px_rgba(189,157,255,0.3)]" : "text-[#aba9bf] hover:text-white"}`}
+          >
+            <Target className="w-4 h-4" />
+            Campaign Goals
+          </button>
+        </div>
       </div>
 
-      <div className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory lg:grid lg:grid-cols-3 lg:overflow-visible">
-        {(["inbound", "converted", "lost"] as LeadStatus[]).map((status) => {
-          const colLeads = leads.filter(l => l.status === status);
-          const color = status === "inbound" ? "bg-[#53ddfc]" : status === "converted" ? "bg-green-500" : "bg-[#ff6e84]";
-          return (
-            <div key={status} className="flex-shrink-0 w-[85vw] md:w-[45vw] lg:w-auto snap-center flex flex-col bg-white/[0.02] rounded-[2.5rem] p-6 border border-white/5 backdrop-blur-3xl h-[calc(100vh-280px)] min-h-[500px]">
-              <div className="flex items-center justify-between mb-6 px-2">
-                <div className="flex items-center gap-4">
-                  <div className={`w-4 h-4 rounded-full ${color} shadow-[0_0_15px_rgba(255,255,255,0.3)]`} />
-                  <h3 className="font-heading font-bold text-white text-xl capitalize tracking-tight">{status}</h3>
-                </div>
-                <div className="px-4 py-1 rounded-full bg-white/5 border border-white/10 text-[#aba9bf] text-xs font-bold font-mono">
-                  {colLeads.length}
-                </div>
-              </div>
-              <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar pb-4">
-                {colLeads.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center opacity-30">
-                    <div className="w-12 h-12 rounded-full border-2 border-dashed border-[#aba9bf] mb-3" />
-                    <p className="text-xs font-bold uppercase tracking-widest text-[#aba9bf]">No {status} leads</p>
+      {activeTab === "pipeline" && (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="flex justify-end mb-6">
+            <button onClick={() => setShowModal(true)} className="px-6 py-2.5 rounded-xl bg-white/10 text-white font-heading font-bold text-sm flex items-center gap-2 border border-white/10 hover:bg-white/20 transition-all">
+              <Plus className="w-4 h-4" /> New Lead
+            </button>
+          </div>
+          <div className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory lg:grid lg:grid-cols-3 lg:overflow-visible">
+            {(["inbound", "converted", "lost"] as LeadStatus[]).map((status) => {
+              const colLeads = leads.filter(l => l.status === status);
+              const color = status === "inbound" ? "bg-[#53ddfc]" : status === "converted" ? "bg-green-500" : "bg-[#ff6e84]";
+              return (
+                <div key={status} className="flex-shrink-0 w-[85vw] md:w-[45vw] lg:w-auto snap-center flex flex-col bg-white/[0.02] rounded-[2.5rem] p-6 border border-white/5 backdrop-blur-3xl h-[calc(100vh-280px)] min-h-[500px]">
+                  <div className="flex items-center justify-between mb-6 px-2">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-4 h-4 rounded-full ${color} shadow-[0_0_15px_rgba(255,255,255,0.3)]`} />
+                      <h3 className="font-heading font-bold text-white text-xl capitalize tracking-tight">{status}</h3>
+                    </div>
+                    <div className="px-4 py-1 rounded-full bg-white/5 border border-white/10 text-[#aba9bf] text-xs font-bold font-mono">
+                      {colLeads.length}
+                    </div>
                   </div>
-                ) : (
-                  colLeads.map(lead => <LeadCard key={lead.id} lead={lead} />)
-                )}
+                  <div className="flex-1 overflow-y-auto space-y-5 pr-2 custom-scrollbar pb-4">
+                    {colLeads.length === 0 ? (
+                      <div className="h-full flex flex-col items-center justify-center opacity-30">
+                        <div className="w-12 h-12 rounded-full border-2 border-dashed border-[#aba9bf] mb-3" />
+                        <p className="text-xs font-bold uppercase tracking-widest text-[#aba9bf]">No {status} leads</p>
+                      </div>
+                    ) : (
+                      colLeads.map(lead => <LeadCard key={lead.id} lead={lead} />)
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {activeTab === "campaigns" && (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white/[0.03] backdrop-blur-[32px] border border-[#474659]/30 rounded-xl p-6 relative overflow-hidden group shadow-[0_4px_60px_rgba(138,76,252,0.04)]">
+              <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#53ddfc]/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="flex justify-between items-start mb-2">
+                <span className="text-[#aba9bf] text-sm font-medium">Active Goals</span>
+                <span className="text-[#53ddfc] bg-[#53ddfc]/10 p-1.5 rounded-md"><Target className="w-4 h-4" /></span>
               </div>
+              <div className="font-heading text-3xl font-bold text-[#e6e3fb]">{goals.filter(g => g.status === 'active').length}</div>
             </div>
-          );
-        })}
-      </div>
+            <div className="bg-white/[0.03] backdrop-blur-[32px] border border-[#474659]/30 rounded-xl p-6 relative overflow-hidden group shadow-[0_4px_60px_rgba(138,76,252,0.04)]">
+              <div className="absolute -right-6 -top-6 w-24 h-24 bg-green-500/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="flex justify-between items-start mb-2">
+                <span className="text-[#aba9bf] text-sm font-medium">Goals Achieved</span>
+                <span className="text-green-500 bg-green-500/10 p-1.5 rounded-md"><Trophy className="w-4 h-4" /></span>
+              </div>
+              <div className="font-heading text-3xl font-bold text-[#e6e3fb]">{goals.filter(g => g.status === 'achieved').length}</div>
+            </div>
+            <div className="flex items-center justify-center">
+              <button onClick={() => setShowGoalModal(true)} className="w-full h-full min-h-[100px] rounded-xl border-2 border-dashed border-[#bd9dff]/30 text-[#bd9dff] font-bold flex flex-col items-center justify-center gap-2 hover:bg-[#bd9dff]/5 hover:border-[#bd9dff]/50 transition-all">
+                <Rocket className="w-6 h-6" />
+                Launch New Campaign
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white/[0.03] backdrop-blur-[32px] border border-[#474659]/30 rounded-xl overflow-hidden shadow-[0_4px_60px_rgba(138,76,252,0.04)]">
+            <div className="p-5 border-b border-white/5 flex justify-between items-center bg-[#111124]/50">
+              <h2 className="font-heading text-lg font-semibold text-[#e6e3fb]">Street Marketing Leaderboard</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-white/5 text-xs text-[#aba9bf] uppercase tracking-wider bg-[#111124]/30">
+                    <th className="py-4 px-6 font-medium">Campaign Goal</th>
+                    <th className="py-4 px-6 font-medium">Assigned Marketer</th>
+                    <th className="py-4 px-6 font-medium">Progress</th>
+                    <th className="py-4 px-6 font-medium text-center">Status</th>
+                    <th className="py-4 px-6 font-medium text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm divide-y divide-white/5">
+                  {goals.map(goal => {
+                    const percent = Math.min(100, Math.round((goal.current / goal.target) * 100));
+                    return (
+                      <tr key={goal.id} className="hover:bg-white/[0.02] transition-colors group">
+                        <td className="py-4 px-6">
+                          <div className="font-bold text-[#e6e3fb]">{goal.title}</div>
+                          <div className="text-[10px] text-[#aba9bf] uppercase tracking-widest mt-1">Target: {goal.target} Leads</div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-[#bd9dff]/20 text-[#bd9dff] flex items-center justify-center text-[10px] font-bold">
+                              {goal.marketerName.substring(0, 2).toUpperCase()}
+                            </div>
+                            <span className="text-[#aba9bf] font-medium">{goal.marketerName}</span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex flex-col gap-1.5 w-full max-w-[200px]">
+                            <div className="flex justify-between text-[10px] font-bold font-mono">
+                              <span className="text-[#53ddfc]">{goal.current} achieved</span>
+                              <span className="text-[#aba9bf]">{percent}%</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-[#23233b] rounded-full overflow-hidden">
+                              <div className={`h-full rounded-full transition-all duration-1000 ${percent === 100 ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-[#53ddfc]'}`} style={{ width: `${percent}%` }} />
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6 text-center">
+                          {goal.status === 'achieved' ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase px-2 py-1 bg-green-500/10 text-green-400 rounded border border-green-500/20"><Trophy className="w-3 h-3" /> Achieved</span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase px-2 py-1 bg-[#53ddfc]/10 text-[#53ddfc] rounded border border-[#53ddfc]/20"><Rocket className="w-3 h-3" /> Active</span>
+                          )}
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            {goal.status !== 'achieved' && (
+                              <button onClick={() => handleUpdateGoal(goal.id, goal.current + 1)} className="px-2 py-1 bg-white/5 hover:bg-[#53ddfc]/20 text-[#aba9bf] hover:text-[#53ddfc] text-xs font-bold rounded transition-colors border border-white/5 border-transparent hover:border-[#53ddfc]/30">
+                                +1 Lead
+                              </button>
+                            )}
+                            <button onClick={() => deleteGoal(goal.id)} className="p-1.5 text-[#aba9bf] hover:text-[#ff6e84] bg-white/5 hover:bg-[#ff6e84]/10 rounded transition-colors">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {goals.length === 0 && (
+                    <tr><td colSpan={5} className="py-12 text-center text-[#aba9bf]">No campaign goals active.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="fixed bottom-6 right-6 z-[100] bg-green-500/20 backdrop-blur-xl border border-green-500/50 p-4 rounded-2xl shadow-[0_10px_40px_rgba(34,197,94,0.3)] flex items-center gap-3 max-w-sm">
+            <div className="p-2 bg-green-500 rounded-xl text-[#0c0c1d]"><Trophy className="w-6 h-6" /></div>
+            <p className="text-sm font-bold text-white">{toast.message}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showGoalModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0c0c1d]/90 backdrop-blur-md">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-md bg-[#18182b] border border-white/10 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#bd9dff]/20 rounded-full blur-3xl" />
+              <div className="flex justify-between items-center mb-6 relative z-10">
+                <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2"><Target className="w-5 h-5 text-[#bd9dff]" /> Setup Campaign Goal</h3>
+                <button onClick={() => setShowGoalModal(false)} className="text-[#aba9bf] hover:text-white"><X className="w-5 h-5" /></button>
+              </div>
+              <form className="space-y-4 relative z-10" onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const title = formData.get('title') as string;
+                const marketerName = formData.get('marketer') as string;
+                const target = parseInt(formData.get('target') as string, 10);
+                if (title && marketerName && target) {
+                  addGoal({ title, marketerName, target });
+                  setShowGoalModal(false);
+                }
+              }}>
+                <div>
+                  <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-wider">Goal Title</label>
+                  <input name="title" required type="text" placeholder="e.g. Summer Promo Street Leads" className="mt-1 w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#bd9dff]" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-wider">Assigned Marketer</label>
+                  <input name="marketer" required type="text" placeholder="e.g. Sarah Connor" className="mt-1 w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#bd9dff]" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-wider">Target Leads</label>
+                  <input name="target" required type="number" min="1" placeholder="50" className="mt-1 w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#bd9dff]" />
+                </div>
+                <button type="submit" className="w-full mt-2 bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] py-3 rounded-xl text-[#0c0c1d] font-bold shadow-[0_0_20px_rgba(189,157,255,0.3)]">Launch Goal</button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {showModal && <AddLeadModal onClose={() => setShowModal(false)} onSave={() => { setShowModal(false); fetchLeads(); }} />}

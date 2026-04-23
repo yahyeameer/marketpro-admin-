@@ -71,8 +71,9 @@ function AddVisitModal({
     contact: "",
     phone: "",
     email: "",
-    status: "Pending Log",
+    status: "Interested",
     notes: "",
+    visit_date: new Date().toISOString().split('T')[0],
   });
 
   const handleSubmit = async () => {
@@ -87,7 +88,7 @@ function AddVisitModal({
       email: form.email,
       status: form.status,
       notes: form.notes,
-      visit_date: new Date().toISOString(),
+      visit_date: new Date(form.visit_date).toISOString(),
     });
 
     if (!error) {
@@ -99,66 +100,145 @@ function AddVisitModal({
     setSaving(false);
   };
 
+  const statusPills = [
+    { label: "Interested", color: "#22c55e", glow: "rgba(34, 197, 94, 0.3)" },
+    { label: "Not Interested", color: "#ef4444", glow: "rgba(239, 68, 68, 0.3)" },
+    { label: "Follow-up", color: "#f59e0b", glow: "rgba(245, 158, 11, 0.3)" },
+  ];
+
+  const inputClasses = "w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-4 focus:ring-[#53ddfc]/10 focus:shadow-[0_0_20px_rgba(83,221,252,0.15)] focus:outline-none transition-all placeholder:text-[#aba9bf]/30";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0c0c1d]/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0c0c1d]/90 backdrop-blur-md">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-lg rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(189,157,255,0.08)] relative bg-[#18182b] border border-[#474659]/30"
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        className="w-full max-w-lg rounded-[2rem] overflow-hidden shadow-[0_0_80px_rgba(189,157,255,0.15)] relative bg-[#18182b]/80 border border-white/10 backdrop-blur-2xl"
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#53ddfc]/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-        <div className="p-6 border-b border-white/5 flex justify-between items-center relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-[#53ddfc]/10">
-              <MapPin className="w-5 h-5 text-[#53ddfc]" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[#bd9dff]/10 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+        
+        <div className="p-8 border-b border-white/5 flex justify-between items-center relative z-10">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#bd9dff]/20 to-[#53ddfc]/20 flex items-center justify-center border border-white/10 shadow-inner">
+              <MapPin className="w-6 h-6 text-[#bd9dff]" />
             </div>
-            <h3 className="font-heading text-lg font-bold text-[#e6e3fb]">Log Field Visit</h3>
+            <div>
+              <h3 className="font-heading text-xl font-bold text-white tracking-tight">Record Field Visit</h3>
+              <p className="text-xs text-[#aba9bf]">Enter client details and outcome.</p>
+            </div>
           </div>
-          <button onClick={onClose} className="text-[#aba9bf] hover:text-[#e6e3fb] p-1 rounded-full hover:bg-white/5">
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="text-[#aba9bf] hover:text-white p-2 rounded-xl hover:bg-white/5 transition-colors">
+            <X className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="p-6 space-y-4 relative z-10">
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[#aba9bf]">Company Name *</label>
-            <input value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} type="text" placeholder="Apex Corp" className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all placeholder:text-[#aba9bf]/30" />
+        <div className="p-8 space-y-6 relative z-10 max-h-[70vh] overflow-y-auto custom-scrollbar">
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Company Name *</label>
+            <input 
+              value={form.company} 
+              onChange={(e) => setForm({ ...form, company: e.target.value })} 
+              type="text" 
+              placeholder="e.g. Global Tech Solutions" 
+              className={inputClasses} 
+            />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#aba9bf]">Contact Person</label>
-              <input value={form.contact} onChange={(e) => setForm({ ...form, contact: e.target.value })} type="text" placeholder="John Doe, Director" className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all placeholder:text-[#aba9bf]/30" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Contact Person</label>
+              <input 
+                value={form.contact} 
+                onChange={(e) => setForm({ ...form, contact: e.target.value })} 
+                type="text" 
+                placeholder="Name & Title" 
+                className={inputClasses} 
+              />
             </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#aba9bf]">Phone</label>
-              <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} type="tel" placeholder="(555) 123-4567" className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all placeholder:text-[#aba9bf]/30" />
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Phone Number</label>
+              <input 
+                value={form.phone} 
+                onChange={(e) => setForm({ ...form, phone: e.target.value })} 
+                type="tel" 
+                placeholder="+1 (555) 000-0000" 
+                className={inputClasses} 
+              />
             </div>
           </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[#aba9bf]">Email</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-2.5 text-[#aba9bf] w-4 h-4" />
-              <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} type="email" placeholder="contact@company.com" className="w-full bg-[#111124] border border-white/5 rounded-lg pl-9 pr-3 py-2 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all placeholder:text-[#aba9bf]/30" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Email Address</label>
+              <input 
+                value={form.email} 
+                onChange={(e) => setForm({ ...form, email: e.target.value })} 
+                type="email" 
+                placeholder="client@email.com" 
+                className={inputClasses} 
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Visit Date</label>
+              <div className="relative">
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#bd9dff]" />
+                <input 
+                  value={form.visit_date} 
+                  onChange={(e) => setForm({ ...form, visit_date: e.target.value })} 
+                  type="date" 
+                  className={`${inputClasses} pl-12 [color-scheme:dark]`} 
+                />
+              </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#aba9bf]">Status</label>
-              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all cursor-pointer">
-                {statusOptions.map((s) => (<option key={s} value={s}>{s}</option>))}
-              </select>
+
+          <div className="space-y-3">
+            <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Status Selector</label>
+            <div className="flex flex-wrap gap-3">
+              {statusPills.map((pill) => (
+                <button
+                  key={pill.label}
+                  type="button"
+                  onClick={() => setForm({ ...form, status: pill.label })}
+                  className={`flex-1 min-w-[100px] px-4 py-3 rounded-2xl text-xs font-bold transition-all border ${
+                    form.status === pill.label
+                      ? "bg-white/10 border-white/20 shadow-lg scale-[1.02]"
+                      : "bg-white/[0.02] border-white/5 text-[#aba9bf] hover:bg-white/5"
+                  }`}
+                  style={{ 
+                    color: form.status === pill.label ? pill.color : undefined,
+                    boxShadow: form.status === pill.label ? `0 0 20px ${pill.glow}` : undefined,
+                    borderColor: form.status === pill.label ? pill.color + '40' : undefined
+                  }}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: pill.color }} />
+                    {pill.label}
+                  </div>
+                </button>
+              ))}
             </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#aba9bf]">Notes</label>
-              <input value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} type="text" placeholder="Brief notes..." className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all placeholder:text-[#aba9bf]/30" />
-            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Notes</label>
+            <textarea 
+              value={form.notes} 
+              onChange={(e) => setForm({ ...form, notes: e.target.value })} 
+              placeholder="Describe the meeting outcome, next steps..." 
+              rows={4}
+              className={`${inputClasses} resize-none`}
+            />
           </div>
         </div>
 
-        <div className="p-6 border-t border-white/5 flex justify-end gap-3 bg-[#000000]/30 relative z-10">
-          <button onClick={onClose} className="px-5 py-2.5 rounded-lg text-sm font-medium text-[#e6e3fb] hover:bg-white/5 transition-colors border border-white/5">Cancel</button>
-          <button onClick={handleSubmit} disabled={saving || !form.company} className="bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] px-6 py-2.5 rounded-lg text-sm font-semibold text-[#0c0c1d] hover:shadow-[0_0_20px_rgba(189,157,255,0.4)] transition-all disabled:opacity-50">
-            {saving ? "Saving..." : "Log Visit"}
+        <div className="p-8 border-t border-white/5 bg-black/20 relative z-10">
+          <button 
+            onClick={handleSubmit} 
+            disabled={saving || !form.company} 
+            className="w-full bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] py-4 rounded-2xl text-base font-bold text-[#0c0c1d] shadow-[0_8px_30px_rgba(189,157,255,0.3)] hover:shadow-[0_12px_40px_rgba(189,157,255,0.5)] hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+          >
+            {saving ? "Processing..." : "Submit Visit"}
           </button>
         </div>
       </motion.div>

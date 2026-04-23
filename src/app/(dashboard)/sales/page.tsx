@@ -40,7 +40,12 @@ function exportCSV(data: Record<string, unknown>[], filename: string) {
 function AddSaleModal({ onClose, onSave }: { onClose: () => void; onSave: () => void }) {
   const { user } = useUser();
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ customer: "", service: "", price: "" });
+  const [form, setForm] = useState({ 
+    customer: "", 
+    service: "Internet", 
+    price: "",
+    sale_date: new Date().toISOString().split('T')[0]
+  });
 
   const handleSubmit = async () => {
     if (!form.customer || !form.price || !user) return;
@@ -51,7 +56,7 @@ function AddSaleModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
       customer: form.customer,
       service: form.service,
       price: parseFloat(form.price),
-      sale_date: new Date().toISOString(),
+      sale_date: new Date(form.sale_date).toISOString(),
     });
     if (!error) {
       await logActivity(user.id, "created_sale", "sale", undefined, { customer: form.customer, price: form.price });
@@ -60,38 +65,115 @@ function AddSaleModal({ onClose, onSave }: { onClose: () => void; onSave: () => 
     setSaving(false);
   };
 
+  const inputClasses = "w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-4 focus:ring-[#53ddfc]/10 focus:shadow-[0_0_20px_rgba(83,221,252,0.15)] focus:outline-none transition-all placeholder:text-[#aba9bf]/30";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0c0c1d]/80 backdrop-blur-sm">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(189,157,255,0.08)] relative bg-[#18182b] border border-[#474659]/30">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#ff6daf]/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-        <div className="p-6 border-b border-white/5 flex justify-between items-center relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-[#ff6daf]/10"><DollarSign className="w-5 h-5 text-[#ff6daf]" /></div>
-            <h3 className="font-heading text-lg font-bold text-[#e6e3fb]">Record New Sale</h3>
-          </div>
-          <button onClick={onClose} className="text-[#aba9bf] hover:text-[#e6e3fb] p-1 rounded-full hover:bg-white/5"><X className="w-5 h-5" /></button>
-        </div>
-        <div className="p-6 space-y-4 relative z-10">
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[#aba9bf]">Customer Name *</label>
-            <input value={form.customer} onChange={(e) => setForm({ ...form, customer: e.target.value })} type="text" placeholder="Acme Corp" className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all placeholder:text-[#aba9bf]/30" />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[#aba9bf]">Service</label>
-            <input value={form.service} onChange={(e) => setForm({ ...form, service: e.target.value })} type="text" placeholder="Enterprise Setup" className="w-full bg-[#111124] border border-white/5 rounded-lg px-3 py-2 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all placeholder:text-[#aba9bf]/30" />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[#aba9bf]">Price *</label>
-            <div className="relative">
-              <DollarSign className="absolute left-3 top-2.5 text-[#aba9bf] w-4 h-4" />
-              <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} type="number" step="0.01" placeholder="0.00" className="w-full bg-[#111124] border border-white/5 rounded-lg pl-9 pr-3 py-2 text-sm text-[#e6e3fb] focus:border-[#53ddfc]/50 focus:ring-1 focus:ring-[#53ddfc]/50 focus:outline-none transition-all placeholder:text-[#aba9bf]/30" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0c0c1d]/90 backdrop-blur-md">
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        className="w-full max-w-lg rounded-[2rem] overflow-hidden shadow-[0_0_80px_rgba(189,157,255,0.15)] relative bg-[#18182b]/80 border border-white/10 backdrop-blur-2xl"
+      >
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[#ff6daf]/10 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+        
+        <div className="p-8 border-b border-white/5 flex justify-between items-center relative z-10">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ff6daf]/20 to-[#bd9dff]/20 flex items-center justify-center border border-white/10 shadow-inner">
+              <DollarSign className="w-6 h-6 text-[#ff6daf]" />
+            </div>
+            <div>
+              <h3 className="font-heading text-xl font-bold text-white tracking-tight">Record New Sale</h3>
+              <p className="text-xs text-[#aba9bf]">Enter transaction details.</p>
             </div>
           </div>
+          <button onClick={onClose} className="text-[#aba9bf] hover:text-white p-2 rounded-xl hover:bg-white/5 transition-colors">
+            <X className="w-6 h-6" />
+          </button>
         </div>
-        <div className="p-6 border-t border-white/5 flex justify-end gap-3 bg-[#000000]/30 relative z-10">
-          <button onClick={onClose} className="px-5 py-2.5 rounded-lg text-sm font-medium text-[#e6e3fb] hover:bg-white/5 transition-colors border border-white/5">Cancel</button>
-          <button onClick={handleSubmit} disabled={saving || !form.customer || !form.price} className="bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] px-6 py-2.5 rounded-lg text-sm font-semibold text-[#0c0c1d] hover:shadow-[0_0_20px_rgba(189,157,255,0.4)] transition-all disabled:opacity-50">
-            {saving ? "Saving..." : "Record Sale"}
+
+        <div className="p-8 space-y-6 relative z-10">
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Customer Name *</label>
+            <input 
+              value={form.customer} 
+              onChange={(e) => setForm({ ...form, customer: e.target.value })} 
+              type="text" 
+              placeholder="Client Name" 
+              className={inputClasses} 
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Service Provided</label>
+              <select 
+                value={form.service} 
+                onChange={(e) => setForm({ ...form, service: e.target.value })} 
+                className={`${inputClasses} cursor-pointer`}
+              >
+                <option value="Internet">Internet</option>
+                <option value="Other Services">Other Services</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Price *</label>
+              <div className="relative">
+                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#53ddfc]" />
+                <input 
+                  value={form.price} 
+                  onChange={(e) => setForm({ ...form, price: e.target.value })} 
+                  type="number" 
+                  step="0.01" 
+                  placeholder="0.00" 
+                  className={`${inputClasses} pl-12`} 
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Sale Date</label>
+              <div className="relative">
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#bd9dff]" />
+                <input 
+                  value={form.sale_date} 
+                  onChange={(e) => setForm({ ...form, sale_date: e.target.value })} 
+                  type="date" 
+                  className={`${inputClasses} pl-12 [color-scheme:dark]`} 
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-[#aba9bf] uppercase tracking-widest ml-1">Salesperson</label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#aba9bf]" />
+                <input 
+                  value={user?.name || ""} 
+                  disabled 
+                  type="text" 
+                  className={`${inputClasses} pl-12 opacity-50 cursor-not-allowed`} 
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Auto-calculated Total Display */}
+          <div className="p-6 rounded-2xl bg-[#53ddfc]/5 border border-[#53ddfc]/20 shadow-[0_0_30px_rgba(83,221,252,0.1)] flex items-center justify-between">
+            <span className="text-sm font-bold text-[#53ddfc] uppercase tracking-widest">Total Amount</span>
+            <span className="text-2xl font-mono font-bold text-white">
+              {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(parseFloat(form.price) || 0)}
+            </span>
+          </div>
+        </div>
+
+        <div className="p-8 border-t border-white/5 bg-black/20 relative z-10">
+          <button 
+            onClick={handleSubmit} 
+            disabled={saving || !form.customer || !form.price} 
+            className="w-full bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] py-4 rounded-2xl text-base font-bold text-[#0c0c1d] shadow-[0_8px_30px_rgba(189,157,255,0.3)] hover:shadow-[0_12px_40px_rgba(189,157,255,0.5)] hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0"
+          >
+            {saving ? "Processing..." : "Submit Sale"}
           </button>
         </div>
       </motion.div>

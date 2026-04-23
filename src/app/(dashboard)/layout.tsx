@@ -1,5 +1,6 @@
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { TopNavbar } from "@/components/dashboard/top-navbar";
+import { BottomNavbar } from "@/components/dashboard/bottom-navbar";
 import { SidebarProvider } from "@/components/dashboard/sidebar-provider";
 import { UserProvider } from "@/components/providers/user-provider";
 
@@ -22,11 +23,13 @@ export default function DashboardLayout({
           <Sidebar />
           <TopNavbar />
 
-          <main className="lg:pl-[240px] pt-16 min-h-screen transition-all duration-300">
+          <main className="lg:pl-[240px] pt-16 min-h-screen transition-all duration-300 pb-28 lg:pb-0">
             <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto space-y-6 md:space-y-8">
               {children}
             </div>
           </main>
+
+          <BottomNavbar />
         </SidebarProvider>
       </UserProvider>
     </>

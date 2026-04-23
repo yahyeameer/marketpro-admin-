@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, Radio, ChevronDown, Menu } from "lucide-react";
+import Link from "next/link";
 import { useSidebar } from "./sidebar-provider";
 import { NotificationPanel } from "./notification-panel";
 import { useUser } from "@/components/providers/user-provider";
@@ -56,13 +57,13 @@ export function TopNavbar() {
         <div className="h-6 w-px bg-[#474659]/30 mx-2" />
 
         {/* User Profile */}
-        <button className="flex items-center gap-3 p-1 pr-3 rounded-full hover:bg-white/10 transition-all border border-[#474659]/20 backdrop-blur-[32px] bg-white/[0.03]">
+        <Link href="/profile" className="flex items-center gap-3 p-1 pr-3 rounded-full hover:bg-white/10 transition-all border border-[#474659]/20 backdrop-blur-[32px] bg-white/[0.03]">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#bd9dff] to-[#ff6daf] flex items-center justify-center text-white text-xs font-bold">
             {initials}
           </div>
           <span className="font-medium text-white/90 hidden sm:inline">{user?.name || "Admin"}</span>
           <ChevronDown className="w-4 h-4 text-white/50" />
-        </button>
+        </Link>
       </div>
     </header>
   );

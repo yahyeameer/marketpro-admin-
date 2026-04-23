@@ -96,12 +96,13 @@ export default function LoginPage() {
                 >
                   Password
                 </label>
-                <a
-                  href="#"
+                <button
+                  type="button"
+                  onClick={(e) => { e.preventDefault(); alert("Please contact IT support to reset your password."); }}
                   className="text-xs text-[#bd9dff] hover:text-[#ff6daf] transition-colors"
                 >
                   Recover Access
-                </a>
+                </button>
               </div>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -170,12 +171,13 @@ export default function LoginPage() {
           <div className="mt-8 text-center border-t border-[#474659]/10 pt-6">
             <p className="text-xs text-[#aba9bf]">
               Require assistance?{" "}
-              <a
-                href="#"
+              <button
+                type="button"
+                onClick={(e) => { e.preventDefault(); alert("IT Support: it@marketpro.com"); }}
                 className="text-[#bd9dff] hover:text-[#b28cff] transition-colors"
               >
                 Contact IT Support
-              </a>
+              </button>
             </p>
             <div className="mt-4 flex items-center justify-center space-x-4 opacity-50">
               <div className="h-4 border-r border-[#474659]" />

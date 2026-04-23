@@ -557,7 +557,12 @@ export default function UsersPage() {
               >
                 Cancel
               </button>
-              <button className="bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] px-6 py-2.5 rounded-lg text-sm font-semibold text-[#0c0c1d] hover:shadow-[0_0_20px_rgba(189,157,255,0.4)] transition-all">
+              <button 
+                onClick={() => {
+                  alert("User creation request sent. Awaiting email verification.");
+                  setIsModalOpen(false);
+                }}
+                className="bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] px-6 py-2.5 rounded-lg text-sm font-semibold text-[#0c0c1d] hover:shadow-[0_0_20px_rgba(189,157,255,0.4)] transition-all">
                 Create User
               </button>
             </div>

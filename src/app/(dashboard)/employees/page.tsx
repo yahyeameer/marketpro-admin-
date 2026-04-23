@@ -3,7 +3,23 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { motion } from "framer-motion";
 import { Download, CalendarDays, ChevronDown, MoreVertical, TrendingUp, TrendingDown, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-// EMPLOYEES array replaced with dynamic superset
+import { useRouter } from "next/navigation";
+
+function exportCSV(data: any[], filename: string) {
+  if (data.length === 0) return;
+  const headers = Object.keys(data[0]);
+  const csv = [
+    headers.join(","),
+    ...data.map((row) => headers.map((h) => `"${String(row[h] ?? "").replace(/"/g, '""')}"`).join(",")),
+  ].join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 function EmployeeCard({ employee, sparklineBars }: { employee: any, sparklineBars: any[] }) {
   return (
@@ -77,7 +93,10 @@ function EmployeeCard({ employee, sparklineBars }: { employee: any, sparklineBar
 
 export default function EmployeesPage() {
   const [tableEmployees, setTableEmployees] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const supabase = createClient();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchEmployees() {
@@ -145,6 +164,21 @@ export default function EmployeesPage() {
     ]
   ];
 
+  const totalPages = Math.ceil(tableEmployees.length / itemsPerPage);
+  const currentEmployees = tableEmployees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handleExport = () => {
+    const dataToExport = tableEmployees.map(emp => ({
+      Name: emp.name,
+      Role: emp.role,
+      Territory: emp.territory,
+      Visits: emp.visits.value,
+      Sales: emp.sales.value,
+      Revenue: emp.totalRev,
+    }));
+    exportCSV(dataToExport, `employees-performance-${new Date().toISOString().split('T')[0]}.csv`);
+  };
+
   return (
     <>
       <style dangerouslySetInnerHTML={{__html: `
@@ -170,7 +204,7 @@ export default function EmployeesPage() {
             <span className="text-[#e6e3fb] font-medium">Last 30 Days</span>
             <ChevronDown className="w-4 h-4 text-[#aba9bf] ml-2" />
           </div>
-          <button className="bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] text-black font-medium text-sm px-4 py-1.5 rounded-lg hover:shadow-[0_0_15px_rgba(189,157,255,0.4)] transition-all flex items-center gap-2">
+          <button onClick={handleExport} className="bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] text-black font-medium text-sm px-4 py-1.5 rounded-lg hover:shadow-[0_0_15px_rgba(189,157,255,0.4)] transition-all flex items-center gap-2">
             <Download className="w-4 h-4" />
             Export Data
           </button>
@@ -188,8 +222,8 @@ export default function EmployeesPage() {
       <div className="bg-[#111124]/30 backdrop-blur-[32px] rounded-xl border border-[#474659]/15 overflow-hidden ambient-shadow">
         <div className="px-6 py-4 border-b border-[#474659]/15 flex justify-between items-center bg-[#111124]/30">
           <h2 className="font-heading text-lg font-bold text-[#e6e3fb]">Comprehensive KPI Directory</h2>
-          <button className="text-sm text-[#bd9dff] hover:text-[#a67aff] transition-colors flex items-center gap-1 font-medium group">
-            View All <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <button onClick={() => router.push('/reports')} className="text-sm text-[#bd9dff] hover:text-[#a67aff] transition-colors flex items-center gap-1 font-medium group">
+            View Reports <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
         
@@ -209,7 +243,7 @@ export default function EmployeesPage() {
               </tr>
             </thead>
             <tbody className="text-sm divide-y divide-[#474659]/10">
-              {tableEmployees.map((emp) => (
+              {currentEmployees.map((emp) => (
                 <tr key={emp.id} className="hover:bg-[#23233b]/30 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -243,15 +277,33 @@ export default function EmployeesPage() {
         </div>
 
         <div className="px-6 py-3 border-t border-[#474659]/15 flex flex-col sm:flex-row justify-between items-center text-xs text-[#aba9bf] bg-[#000000]/30 gap-4">
-          <span>Showing 1-{tableEmployees.length} of 42 Employees</span>
+          <span>Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, tableEmployees.length)} of {tableEmployees.length} Employees</span>
           <div className="flex gap-2">
-            <button className="w-8 h-8 rounded flex items-center justify-center hover:bg-[#23233b] transition-colors disabled:opacity-50" disabled>
+            <button 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))} 
+              className="w-8 h-8 rounded flex items-center justify-center hover:bg-[#23233b] transition-colors disabled:opacity-50" 
+              disabled={currentPage === 1}
+            >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <button className="w-8 h-8 rounded flex items-center justify-center bg-[#bd9dff]/20 text-[#bd9dff] font-medium border border-[#bd9dff]/30">1</button>
-            <button className="w-8 h-8 rounded flex items-center justify-center hover:bg-[#23233b] transition-colors">2</button>
-            <button className="w-8 h-8 rounded flex items-center justify-center hover:bg-[#23233b] transition-colors">3</button>
-            <button className="w-8 h-8 rounded flex items-center justify-center hover:bg-[#23233b] transition-colors">
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button 
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`w-8 h-8 rounded flex items-center justify-center transition-colors ${
+                  currentPage === i + 1 
+                    ? "bg-[#bd9dff]/20 text-[#bd9dff] font-medium border border-[#bd9dff]/30" 
+                    : "hover:bg-[#23233b]"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} 
+              className="w-8 h-8 rounded flex items-center justify-center hover:bg-[#23233b] transition-colors disabled:opacity-50"
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

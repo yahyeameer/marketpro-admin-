@@ -6,9 +6,11 @@ import { KpiCard } from "@/components/dashboard/kpi-card";
 import { createClient } from "@/lib/supabase/client";
 import { useUser } from "@/components/providers/user-provider";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
   const { user } = useUser();
+  const router = useRouter();
   const [kpis, setKpis] = useState({
     visits: 0,
     sales: 0,
@@ -122,11 +124,11 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-4">
-        <button className="flex-1 min-w-[140px] bg-gradient-to-br from-[#bd9dff] to-[#7C3AED] text-white py-4 rounded-2xl font-bold shadow-[0_8px_24px_rgba(124,58,237,0.3)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+        <button onClick={() => router.push("/visits")} className="flex-1 min-w-[140px] bg-gradient-to-br from-[#bd9dff] to-[#7C3AED] text-white py-4 rounded-2xl font-bold shadow-[0_8px_24px_rgba(124,58,237,0.3)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
           <Plus className="w-5 h-5" />
           New Visit
         </button>
-        <button className="flex-1 min-w-[140px] bg-gradient-to-br from-[#53ddfc] to-[#0ea5e9] text-white py-4 rounded-2xl font-bold shadow-[0_8px_24px_rgba(14,165,233,0.3)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+        <button onClick={() => router.push("/sales")} className="flex-1 min-w-[140px] bg-gradient-to-br from-[#53ddfc] to-[#0ea5e9] text-white py-4 rounded-2xl font-bold shadow-[0_8px_24px_rgba(14,165,233,0.3)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
           <Plus className="w-5 h-5" />
           New Sale
         </button>
@@ -139,7 +141,7 @@ export default function DashboardPage() {
             <Clock className="w-5 h-5 text-[#aba9bf]" />
             Recent Activity
           </h2>
-          <button className="text-xs font-semibold text-[#bd9dff] hover:underline">View All</button>
+          <button onClick={() => router.push("/reports")} className="text-xs font-semibold text-[#bd9dff] hover:underline">View All</button>
         </div>
         <div className="divide-y divide-white/5">
           {activities.length > 0 ? activities.map((activity, i) => (

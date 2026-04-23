@@ -147,7 +147,11 @@ export default function ReportsPage() {
   const pathData = `M${polyPoints.join(" L")}`;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="p-6 lg:p-8 relative z-10">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="p-6 lg:p-8 relative z-10 min-h-screen">
+      {/* Liquid Light Orbs (Background Glows) */}
+      <div className="fixed top-0 right-[20%] w-[500px] h-[500px] rounded-full pointer-events-none z-0 blur-[100px] opacity-20 bg-gradient-to-br from-[#bd9dff] to-[#53ddfc]" />
+      <div className="fixed bottom-0 left-[10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0 blur-[120px] opacity-10 bg-gradient-to-tr from-[#53ddfc] to-[#bd9dff]" />
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div>
@@ -198,58 +202,63 @@ export default function ReportsPage() {
       ) : (
         <div className="space-y-6">
           {activeTab === "dashboard" && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* Summary Cards */}
+            <motion.div initial="hidden" animate="visible" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } }} className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
+              {/* Summary Cards - Bento Style */}
               <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
-                  { label: "Total Revenue", val: `$${stats.rev.toLocaleString()}`, icon: TrendingUp, color: "#bd9dff" },
-                  { label: "Sales Closed", val: stats.count, icon: BarChart2, color: "#53ddfc" },
-                  { label: "Field Visits", val: stats.visitCount, icon: Users, color: "#e6e3fb" },
+                  { label: "Total Revenue", val: `$${stats.rev.toLocaleString()}`, icon: TrendingUp, color: "#bd9dff", glow: "rgba(189,157,255,0.4)", gradient: "from-[#bd9dff]/10 to-transparent" },
+                  { label: "Sales Closed", val: stats.count, icon: BarChart2, color: "#53ddfc", glow: "rgba(83,221,252,0.4)", gradient: "from-[#53ddfc]/10 to-transparent" },
+                  { label: "Field Visits", val: stats.visitCount, icon: Users, color: "#e6e3fb", glow: "rgba(255,255,255,0.2)", gradient: "from-white/10 to-transparent" },
                 ].map((s, i) => (
-                  <div key={i} className="bg-white/[0.06] border border-[#474659]/30 rounded-xl p-5 flex items-center gap-4">
-                    <div className="p-3 rounded-lg bg-white/[0.03] border border-white/[0.05]">
-                      <s.icon className="w-6 h-6" style={{ color: s.color }} />
+                  <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} key={i} className="group relative bg-[#111124]/60 backdrop-blur-3xl border border-[#474659]/30 rounded-2xl p-6 flex items-center gap-5 hover:-translate-y-1 transition-all duration-300" style={{ boxShadow: `0 4px 30px rgba(0,0,0,0.1)` }}>
+                    {/* Hover Glow Effect */}
+                    <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ boxShadow: `0 0 30px ${s.glow}` }} />
+                    <div className={`absolute inset-0 bg-gradient-to-br ${s.gradient} rounded-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
+                    
+                    <div className="relative z-10 p-4 rounded-xl bg-black/40 border border-white/5 group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                      <s.icon className="w-8 h-8" style={{ color: s.color, filter: `drop-shadow(0 0 10px ${s.glow})` }} />
                     </div>
-                    <div>
-                      <p className="text-xs text-[#aba9bf] uppercase tracking-wider">{s.label}</p>
-                      <h4 className="text-xl font-bold text-[#e6e3fb] mt-1">{s.val}</h4>
+                    <div className="relative z-10">
+                      <p className="text-[10px] text-[#aba9bf] uppercase tracking-widest font-bold mb-1">{s.label}</p>
+                      <h4 className="text-3xl font-heading font-extrabold text-white" style={{ textShadow: `0 0 20px ${s.glow}` }}>{s.val}</h4>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
 
               {/* Chart */}
-              <div className="lg:col-span-8 bg-white/[0.06] border border-[#474659]/30 rounded-xl p-6">
-                <div className="flex justify-between items-start mb-8">
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="lg:col-span-8 group relative bg-[#111124]/60 backdrop-blur-3xl border border-[#474659]/30 rounded-2xl p-6 lg:p-8 hover:border-[#bd9dff]/30 transition-colors duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_0_40px_rgba(189,157,255,0.1)]">
+                <div className="flex justify-between items-start mb-8 relative z-10">
                   <div>
-                    <h3 className="font-heading text-lg font-bold text-[#e6e3fb]">Revenue Trend (Last 7 Days)</h3>
-                    <p className="text-xs text-[#aba9bf] mt-1">Click points to filter records</p>
+                    <h3 className="font-heading text-xl font-bold text-white tracking-tight flex items-center gap-2">Revenue Velocity <span className="text-xs bg-[#bd9dff]/20 text-[#bd9dff] px-2 py-0.5 rounded-full border border-[#bd9dff]/30">7 Days</span></h3>
+                    <p className="text-sm text-[#aba9bf] mt-1">Interactive velocity tracking. Click data points to drill down.</p>
                   </div>
                 </div>
-                <div className="h-64 w-full relative">
-                  <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <path d={`${pathData} L100,100 L0,100 Z`} fill="url(#grad2)" opacity="0.2" />
-                    <path d={pathData} fill="none" stroke="#bd9dff" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                <div className="h-64 w-full relative z-10">
+                  <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <path d={`${pathData} L100,100 L0,100 Z`} fill="url(#grad2)" opacity="0.3" />
+                    <path d={pathData} fill="none" stroke="#bd9dff" strokeWidth="2.5" vectorEffect="non-scaling-stroke" style={{ filter: "drop-shadow(0 0 8px rgba(189,157,255,0.8))" }} />
                     <defs>
-                      <linearGradient id="grad2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#bd9dff"/><stop offset="100%" stopColor="#000" stopOpacity="0"/></linearGradient>
+                      <linearGradient id="grad2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#bd9dff"/><stop offset="100%" stopColor="#bd9dff" stopOpacity="0"/></linearGradient>
                     </defs>
                     {polyPoints.map((p, i) => {
                       const [x, y] = p.split(",");
                       return (
-                        <circle 
-                          key={i} cx={x} cy={y} r="3" 
-                          fill="#bd9dff" className="cursor-pointer transition-all hover:stroke-[#fff] hover:stroke-[2px]"
+                        <motion.circle 
+                          whileHover={{ scale: 2 }}
+                          key={i} cx={x} cy={y} r="2.5" 
+                          fill="#ffffff" className="cursor-pointer origin-center shadow-[0_0_10px_#fff]"
                           onClick={() => { setActiveTab("records"); }}
                         />
                       );
                     })}
                   </svg>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Top Performers */}
-              <div className="lg:col-span-4 bg-white/[0.06] border border-[#474659]/30 rounded-xl p-6">
-                <h3 className="font-heading text-lg font-bold text-[#e6e3fb] mb-4">Top Performers</h3>
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="lg:col-span-4 bg-[#111124]/60 backdrop-blur-3xl border border-[#474659]/30 rounded-2xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+                <h3 className="font-heading text-lg font-bold text-white mb-6 tracking-tight flex items-center gap-2"><ArrowRight className="w-4 h-4 text-[#53ddfc]"/> Top Performers</h3>
                 <div className="space-y-4">
                   {stats.topAgents.length === 0 ? <p className="text-sm text-[#aba9bf]">No data yet.</p> :
                     stats.topAgents.map((emp: any, i: number) => {
@@ -258,26 +267,29 @@ export default function ReportsPage() {
                       return (
                         <div 
                           key={i} 
-                          className={`cursor-pointer group p-2 rounded-lg transition-colors ${selectedUser === emp.id ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                          className={`cursor-pointer group p-3 rounded-xl border transition-all duration-300 ${selectedUser === emp.id ? 'bg-[#bd9dff]/10 border-[#bd9dff]/30 shadow-[0_0_15px_rgba(189,157,255,0.2)]' : 'bg-black/20 border-transparent hover:bg-white/5 hover:border-white/10'}`}
                           onClick={() => setSelectedUser(selectedUser === emp.id ? null : emp.id)}
                         >
-                          <div className="flex justify-between text-xs mb-1">
-                            <span className="text-[#e6e3fb] group-hover:text-[#bd9dff] transition-colors">{emp.name}</span>
-                            <span className="font-bold text-[#bd9dff]">${emp.rev.toLocaleString()}</span>
+                          <div className="flex justify-between items-center text-sm mb-2">
+                            <span className="font-bold text-[#e6e3fb] group-hover:text-white transition-colors flex items-center gap-2">
+                              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] flex items-center justify-center text-[10px] text-[#0c0c1d]">{i+1}</div>
+                              {emp.name}
+                            </span>
+                            <span className="font-mono font-bold text-[#53ddfc]" style={{ textShadow: "0 0 10px rgba(83,221,252,0.4)" }}>${emp.rev.toLocaleString()}</span>
                           </div>
-                          <div className="w-full h-1.5 bg-[#23233b] rounded-full overflow-hidden">
+                          <div className="w-full h-1.5 bg-[#23233b] rounded-full overflow-hidden shadow-inner">
                             <motion.div 
                               initial={{ width: 0 }}
                               animate={{ width: `${p}%` }}
-                              className="h-full bg-gradient-to-r from-[#bd9dff] to-[#53ddfc]" 
+                              className="h-full bg-gradient-to-r from-[#bd9dff] to-[#53ddfc] shadow-[0_0_10px_rgba(83,221,252,0.8)]" 
                             />
                           </div>
                         </div>
                       );
                     })}
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           )}
 
           {activeTab === "calendar" && (

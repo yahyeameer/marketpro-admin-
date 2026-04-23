@@ -69,7 +69,11 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-8 pb-10">
+    <div className="space-y-8 pb-10 relative z-10 min-h-screen">
+      {/* Background Liquid Light Glows */}
+      <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none z-0 blur-[150px] opacity-20 bg-gradient-to-br from-[#bd9dff] to-[#53ddfc]" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0 blur-[150px] opacity-10 bg-gradient-to-tr from-[#ff6daf] to-[#bd9dff]" />
+
       {/* Header with Greeting & Role */}
       <div className="flex flex-col gap-2">
         <motion.div 
@@ -123,27 +127,33 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="flex flex-wrap gap-4">
-        <button onClick={() => router.push("/visits")} className="flex-1 min-w-[140px] bg-gradient-to-br from-[#bd9dff] to-[#7C3AED] text-white py-4 rounded-2xl font-bold shadow-[0_8px_24px_rgba(124,58,237,0.3)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
-          <Plus className="w-5 h-5" />
-          New Visit
+      <div className="flex flex-wrap gap-4 relative z-10">
+        <button onClick={() => router.push("/visits")} className="group relative flex-1 min-w-[140px] bg-gradient-to-br from-[#bd9dff] to-[#7C3AED] text-white py-4 rounded-2xl font-bold hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 overflow-hidden shadow-[0_8px_32px_rgba(124,58,237,0.3)]">
+          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+          <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-150%] group-hover:animate-shimmer pointer-events-none" />
+          <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+          <span className="relative z-10 tracking-wide" style={{ textShadow: "0 0 10px rgba(255,255,255,0.5)" }}>New Visit</span>
         </button>
-        <button onClick={() => router.push("/sales")} className="flex-1 min-w-[140px] bg-gradient-to-br from-[#53ddfc] to-[#0ea5e9] text-white py-4 rounded-2xl font-bold shadow-[0_8px_24px_rgba(14,165,233,0.3)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
-          <Plus className="w-5 h-5" />
-          New Sale
+        <button onClick={() => router.push("/sales")} className="group relative flex-1 min-w-[140px] bg-gradient-to-br from-[#53ddfc] to-[#0ea5e9] text-white py-4 rounded-2xl font-bold hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 overflow-hidden shadow-[0_8px_32px_rgba(14,165,233,0.3)]">
+          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+          <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-150%] group-hover:animate-shimmer pointer-events-none" />
+          <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+          <span className="relative z-10 tracking-wide" style={{ textShadow: "0 0 10px rgba(255,255,255,0.5)" }}>New Sale</span>
         </button>
       </div>
 
       {/* Recent Activity Feed */}
-      <div className="rounded-3xl border border-[#474659]/15 bg-white/[0.03] backdrop-blur-[32px] overflow-hidden">
-        <div className="p-6 border-b border-white/5 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Clock className="w-5 h-5 text-[#aba9bf]" />
-            Recent Activity
+      <div className="relative z-10 rounded-3xl border border-[#474659]/30 bg-[#111124]/60 backdrop-blur-3xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.3)] hover:border-[#bd9dff]/30 transition-colors duration-500 hover:shadow-[0_0_30px_rgba(189,157,255,0.1)]">
+        <div className="p-6 border-b border-white/10 flex items-center justify-between">
+          <h2 className="text-lg font-heading font-bold text-white flex items-center gap-2 tracking-tight">
+            <div className="w-8 h-8 rounded-full bg-[#bd9dff]/10 flex items-center justify-center border border-[#bd9dff]/20">
+              <Clock className="w-4 h-4 text-[#bd9dff]" style={{ filter: "drop-shadow(0 0 8px rgba(189,157,255,0.8))" }} />
+            </div>
+            Activity Stream
           </h2>
-          <button onClick={() => router.push("/reports")} className="text-xs font-semibold text-[#bd9dff] hover:underline">View All</button>
+          <button onClick={() => router.push("/reports")} className="text-xs font-semibold text-[#bd9dff] hover:text-white transition-colors bg-[#bd9dff]/10 px-3 py-1.5 rounded-full border border-[#bd9dff]/20 hover:bg-[#bd9dff]/20 hover:shadow-[0_0_15px_rgba(189,157,255,0.3)]">View All</button>
         </div>
-        <div className="divide-y divide-white/5">
+        <div className="divide-y divide-[#474659]/30">
           {activities.length > 0 ? activities.map((activity, i) => (
             <motion.div 
               key={i}
@@ -159,7 +169,7 @@ export default function DashboardPage() {
                   {activity.type === 'sale' ? <ShoppingCart className="w-5 h-5" /> : <MapPin className="w-5 h-5" />}
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">{activity.title}</h3>
+                  <h3 className="text-sm font-bold text-[#e6e3fb] group-hover:text-white transition-colors">{activity.title}</h3>
                   <p className="text-xs text-[#aba9bf]">{activity.sub}</p>
                 </div>
               </div>

@@ -287,8 +287,8 @@ export default function SalesPage() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="relative z-10">
-      <div className="absolute w-[600px] h-[600px] rounded-full blur-[60px] z-0 pointer-events-none -top-[200px] -right-[100px]" style={{ background: "radial-gradient(circle, rgba(189,157,255,0.15) 0%, rgba(12,12,29,0) 70%)" }} />
-      <div className="absolute w-[500px] h-[500px] rounded-full blur-[60px] z-0 pointer-events-none top-[40%] -left-[150px]" style={{ background: "radial-gradient(circle, rgba(64,206,237,0.1) 0%, rgba(12,12,29,0) 70%)" }} />
+      <div className="absolute w-[600px] h-[600px] rounded-full blur-[60px] will-change-transform transform-gpu z-0 pointer-events-none -top-[200px] -right-[100px]" style={{ background: "radial-gradient(circle, rgba(189,157,255,0.15) 0%, rgba(12,12,29,0) 70%)" }} />
+      <div className="absolute w-[500px] h-[500px] rounded-full blur-[60px] will-change-transform transform-gpu z-0 pointer-events-none top-[40%] -left-[150px]" style={{ background: "radial-gradient(circle, rgba(64,206,237,0.1) 0%, rgba(12,12,29,0) 70%)" }} />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">

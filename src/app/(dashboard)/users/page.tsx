@@ -281,14 +281,14 @@ export default function UsersPage() {
     >
       {/* Liquid Light Orbs */}
       <div
-        className="fixed top-[-100px] right-[-100px] w-[600px] h-[600px] rounded-full pointer-events-none z-0 blur-[60px]"
+        className="fixed top-[-100px] right-[-100px] w-[600px] h-[600px] rounded-full pointer-events-none z-0 blur-[60px] will-change-transform transform-gpu"
         style={{
           background:
             "radial-gradient(circle, rgba(64, 206, 237, 0.15) 0%, rgba(64, 206, 237, 0) 70%)",
         }}
       />
       <div
-        className="fixed bottom-[-200px] left-[100px] w-[800px] h-[800px] rounded-full pointer-events-none z-0 blur-[60px]"
+        className="fixed bottom-[-200px] left-[100px] w-[800px] h-[800px] rounded-full pointer-events-none z-0 blur-[60px] will-change-transform transform-gpu"
         style={{
           background:
             "radial-gradient(circle, rgba(250, 83, 164, 0.1) 0%, rgba(250, 83, 164, 0) 70%)",

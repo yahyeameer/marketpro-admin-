@@ -149,8 +149,8 @@ export default function ReportsPage() {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="p-6 lg:p-8 relative z-10 min-h-screen">
       {/* Liquid Light Orbs (Background Glows) */}
-      <div className="fixed top-0 right-[20%] w-[500px] h-[500px] rounded-full pointer-events-none z-0 blur-[100px] opacity-20 bg-gradient-to-br from-[#bd9dff] to-[#53ddfc]" />
-      <div className="fixed bottom-0 left-[10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0 blur-[120px] opacity-10 bg-gradient-to-tr from-[#53ddfc] to-[#bd9dff]" />
+      <div className="fixed top-0 right-[20%] w-[500px] h-[500px] rounded-full pointer-events-none z-0 blur-[80px] opacity-20 bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] will-change-transform transform-gpu" />
+      <div className="fixed bottom-0 left-[10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0 blur-[80px] opacity-10 bg-gradient-to-tr from-[#53ddfc] to-[#bd9dff] will-change-transform transform-gpu" />
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">

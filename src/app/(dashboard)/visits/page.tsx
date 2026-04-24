@@ -285,8 +285,8 @@ export default function VisitsPage() {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="relative z-10">
       <div className="fixed top-0 left-[240px] w-full h-full pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-[10%] right-[15%] w-[400px] h-[400px] rounded-full bg-[#40ceed] opacity-10 blur-[100px]" />
-        <div className="absolute bottom-[20%] left-[10%] w-[500px] h-[500px] rounded-full bg-[#fa53a4] opacity-5 blur-[120px]" />
+        <div className="absolute top-[10%] right-[15%] w-[400px] h-[400px] rounded-full bg-[#40ceed] opacity-10 blur-[80px] will-change-transform transform-gpu" />
+        <div className="absolute bottom-[20%] left-[10%] w-[500px] h-[500px] rounded-full bg-[#fa53a4] opacity-5 blur-[80px] will-change-transform transform-gpu" />
       </div>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto">

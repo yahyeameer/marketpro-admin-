@@ -71,8 +71,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 pb-10 relative z-10 min-h-screen">
       {/* Background Liquid Light Glows */}
-      <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none z-0 blur-[150px] opacity-20 bg-gradient-to-br from-[#bd9dff] to-[#53ddfc]" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0 blur-[150px] opacity-10 bg-gradient-to-tr from-[#ff6daf] to-[#bd9dff]" />
+      <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none z-0 blur-[80px] opacity-20 bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] will-change-transform transform-gpu" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0 blur-[80px] opacity-10 bg-gradient-to-tr from-[#ff6daf] to-[#bd9dff] will-change-transform transform-gpu" />
 
       {/* Header with Greeting & Role */}
       <div className="flex flex-col gap-2">

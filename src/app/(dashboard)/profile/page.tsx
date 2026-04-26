@@ -43,16 +43,16 @@ export default function ProfilePage() {
           animate={{ scale: 1, opacity: 1 }}
           className="relative inline-block"
         >
-          <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[#bd9dff] to-[#ff6daf] flex items-center justify-center text-white text-3xl font-bold shadow-[0_0_40px_rgba(189,157,255,0.4)]">
+          <div className="w-24 h-24 rounded-3xl bg-primary text-primary-foreground flex items-center justify-center text-3xl font-extrabold shadow-lg shadow-primary/30">
             {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || "U"}
           </div>
-          <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-[#0c0c1d] border border-white/10 flex items-center justify-center">
-            <Shield className="w-4 h-4 text-[#53ddfc]" />
+          <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl glass-panel border border-border flex items-center justify-center shadow-sm">
+            <Shield className="w-4 h-4 text-primary" />
           </div>
         </motion.div>
         <div>
-          <h1 className="text-3xl font-bold text-white font-heading">{user?.name}</h1>
-          <p className="text-[#aba9bf] text-sm uppercase tracking-widest font-semibold">{user?.role}</p>
+          <h1 className="text-3xl font-extrabold text-foreground font-heading">{user?.name}</h1>
+          <p className="text-muted-foreground text-sm uppercase tracking-widest font-bold mt-1">{user?.role}</p>
         </div>
       </div>
 
@@ -61,25 +61,25 @@ export default function ProfilePage() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-[32px] p-8 space-y-6"
+        className="glass-panel rounded-3xl border-border/50 p-8 space-y-6 shadow-sm"
       >
         <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/5">
-            <Mail className="w-6 h-6 text-[#bd9dff]" />
+          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20">
+            <Mail className="w-6 h-6 text-primary" />
           </div>
           <div className="flex-1">
-            <p className="text-[10px] uppercase font-bold text-[#aba9bf] tracking-widest">Email Address</p>
-            <p className="text-[#e6e3fb] font-medium">{user?.email}</p>
+            <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Email Address</p>
+            <p className="text-foreground font-bold">{user?.email}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/5">
-            <Shield className="w-6 h-6 text-[#53ddfc]" />
+          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20">
+            <Shield className="w-6 h-6 text-primary" />
           </div>
           <div className="flex-1">
-            <p className="text-[10px] uppercase font-bold text-[#aba9bf] tracking-widest">Permissions Role</p>
-            <p className="text-[#e6e3fb] font-medium capitalize">{user?.role}</p>
+            <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Permissions Role</p>
+            <p className="text-foreground font-bold capitalize">{user?.role}</p>
           </div>
         </div>
       </motion.div>
@@ -90,21 +90,21 @@ export default function ProfilePage() {
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-[32px] p-6 text-center"
+          className="glass-panel rounded-3xl border-border/50 p-6 text-center shadow-sm"
         >
-          <Award className="w-8 h-8 text-[#ff6daf] mx-auto mb-2" />
-          <p className="text-2xl font-bold text-white">{stats.visits}</p>
-          <p className="text-[10px] uppercase font-bold text-[#aba9bf] tracking-widest">Total Visits</p>
+          <Award className="w-8 h-8 text-primary mx-auto mb-2" />
+          <p className="text-2xl font-extrabold text-foreground font-mono">{stats.visits}</p>
+          <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mt-1">Total Visits</p>
         </motion.div>
         <motion.div
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-[32px] p-6 text-center"
+          className="glass-panel rounded-3xl border-border/50 p-6 text-center shadow-sm"
         >
-          <Target className="w-8 h-8 text-[#53ddfc] mx-auto mb-2" />
-          <p className="text-2xl font-bold text-white">{stats.sales}</p>
-          <p className="text-[10px] uppercase font-bold text-[#aba9bf] tracking-widest">Total Sales</p>
+          <Target className="w-8 h-8 text-primary mx-auto mb-2" />
+          <p className="text-2xl font-extrabold text-foreground font-mono">{stats.sales}</p>
+          <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mt-1">Total Sales</p>
         </motion.div>
       </div>
 
@@ -112,9 +112,9 @@ export default function ProfilePage() {
       <div className="space-y-4">
         <button
           onClick={handleSignOut}
-          className="w-full flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-colors"
+          className="w-full flex items-center justify-center gap-3 px-8 py-4 rounded-2xl glass-panel border border-border/50 text-foreground font-bold hover:bg-muted/50 transition-colors shadow-sm hover:shadow"
         >
-          <LogOut className="w-5 h-5 text-[#ff6e84]" />
+          <LogOut className="w-5 h-5 text-destructive" />
           Sign Out
         </button>
       </div>

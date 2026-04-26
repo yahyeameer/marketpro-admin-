@@ -8,8 +8,8 @@ export interface CustomRole {
 }
 
 const defaultRoles: CustomRole[] = [
-  { id: 'admin', name: 'Admin', color: 'bg-[#bd9dff]/10 text-[#bd9dff] border-[#bd9dff]/20', permissions: { dashboard: true, visits: true, sales: true, leads: true, employees: true, reports: true, users: true, settings: true } },
-  { id: 'manager', name: 'Manager', color: 'bg-[#53ddfc]/10 text-[#53ddfc] border-[#53ddfc]/20', permissions: { dashboard: true, visits: true, sales: true, leads: true, employees: true, reports: true, users: false, settings: false } },
+  { id: 'admin', name: 'Admin', color: 'bg-white/10 text-[#09090b] border-[#e4e4e7]', permissions: { dashboard: true, visits: true, sales: true, leads: true, employees: true, reports: true, users: true, settings: true } },
+  { id: 'manager', name: 'Manager', color: 'bg-[#f4f4f5]/10 text-[#27272a] border-[#e4e4e7]/20', permissions: { dashboard: true, visits: true, sales: true, leads: true, employees: true, reports: true, users: false, settings: false } },
 ];
 
 export function useCustomRoles() {

@@ -16,7 +16,7 @@ export function BottomNavbar() {
 
   return (
     <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] z-50 lg:hidden">
-      <div className="bg-[#0c0c1d]/60 backdrop-blur-2xl border border-white/10 rounded-2xl p-2 flex justify-around items-center shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+      <div className="bg-white border border-[#e4e4e7] rounded-2xl p-2 flex justify-around items-center shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -26,7 +26,7 @@ export function BottomNavbar() {
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 ${
-                isActive ? "text-[#bd9dff] bg-white/5" : "text-white/40 hover:text-white/70"
+                isActive ? "text-[#09090b] bg-[#f4f4f5]" : "text-[#a1a1aa] hover:text-[#09090b]"
               }`}
             >
               <Icon className="w-6 h-6" />

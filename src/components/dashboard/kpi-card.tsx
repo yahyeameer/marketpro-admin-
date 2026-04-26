@@ -31,7 +31,7 @@ export function KpiCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-      className="relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 rounded-2xl border border-[#474659]/30 bg-[#111124]/60 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+      className="relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 rounded-2xl glass-panel"
     >
       {/* Intense Hover Glow Background */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ boxShadow: `0 0 40px ${glowColor} inset` }} />
@@ -46,17 +46,17 @@ export function KpiCard({
       <div className="p-6 relative z-10">
         <div className="flex justify-between items-start mb-4">
           <div
-            className="p-3 rounded-xl bg-black/40 border border-white/5 group-hover:scale-110 transition-transform duration-300 shadow-inner"
+            className="p-3 rounded-xl bg-white/50 border border-white/60 group-hover:scale-110 transition-transform duration-300 shadow-sm backdrop-blur-sm"
           >
             <Icon className="w-6 h-6" style={{ color: iconColor, filter: `drop-shadow(0 0 10px ${iconColor})` }} />
           </div>
           <span
             className={`flex items-center text-xs font-medium ${
               trendDirection === "up"
-                ? "text-[#65e1ff]"
+                ? "text-emerald-500"
                 : trendDirection === "down"
-                ? "text-[#ff6e84]"
-                : "text-[#aba9bf]"
+                ? "text-destructive"
+                : "text-muted-foreground"
             }`}
           >
             {trendDirection === "up" && (
@@ -78,11 +78,11 @@ export function KpiCard({
           </span>
         </div>
 
-        <p className="text-[10px] uppercase tracking-widest font-bold text-[#aba9bf] mb-1">{title}</p>
-        <h3 className="font-heading text-3xl font-extrabold tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-[#aba9bf] transition-all duration-300" style={{ textShadow: `0 0 20px ${glowColor}` }}>
+        <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-1">{title}</p>
+        <h3 className="font-heading text-3xl font-extrabold tracking-tight text-foreground transition-all duration-300 drop-shadow-sm">
           {value}
           {valueSuffix && (
-            <span className="text-lg text-[#aba9bf] font-medium ml-1">
+            <span className="text-lg text-muted-foreground font-medium ml-1">
               {valueSuffix}
             </span>
           )}

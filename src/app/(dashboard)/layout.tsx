@@ -11,10 +11,9 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-[#0c0c1d]">
-        <div className="absolute -top-[10%] -right-[5%] w-[60vw] h-[60vw] rounded-full bg-[#bd9dff] opacity-[0.15] blur-[80px] will-change-transform transform-gpu" />
-        <div className="absolute -bottom-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-[#53ddfc] opacity-[0.15] blur-[80px] will-change-transform transform-gpu" />
-        <div className="absolute top-[40%] left-[30%] w-[40vw] h-[40vw] rounded-full bg-[#ff6daf] opacity-[0.15] blur-[80px] will-change-transform transform-gpu" />
+      <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-white">
+        <div className="absolute -top-[10%] -right-[5%] w-[60vw] h-[60vw] rounded-full bg-[#f4f4f5] opacity-[0.5] blur-[100px] will-change-transform transform-gpu" />
+        <div className="absolute -bottom-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-[#e4e4e7] opacity-[0.3] blur-[100px] will-change-transform transform-gpu" />
       </div>
 
       <UserProvider>

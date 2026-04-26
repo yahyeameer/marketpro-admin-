@@ -61,27 +61,27 @@ export function RevenueChart() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className="rounded-xl border border-[#474659]/20 bg-white/[0.06] backdrop-blur-[32px] p-6 md:p-8"
-      style={{ boxShadow: "0 0 60px rgba(138, 76, 252, 0.08)" }}
+      className="rounded-xl border border-[#e4e4e7]/20 bg-white/[0.06] backdrop-blur-[32px] p-6 md:p-8"
+      style={{ boxShadow: "0 0 60px rgba(228,228,231,0.3)" }}
     >
       <div className="flex justify-between items-start mb-8">
         <div>
-          <h2 className="font-heading text-xl font-bold text-[#e6e3fb]">
+          <h2 className="font-heading text-xl font-bold text-[#09090b]">
             Monthly Revenue Trend
           </h2>
-          <p className="text-sm text-[#aba9bf] mt-1">
+          <p className="text-sm text-[#71717a] mt-1">
             Real-time aggregation across all sales.
           </p>
         </div>
-        <div className="flex p-1 rounded-lg border border-[#474659]/15 bg-white/[0.03] backdrop-blur-[32px]">
+        <div className="flex p-1 rounded-lg border border-[#e4e4e7]/15 bg-[#f4f4f5] backdrop-blur-[32px]">
           {timeRanges.map((range) => (
             <button
               key={range}
               onClick={() => setActiveRange(range)}
               className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                 activeRange === range
-                  ? "bg-white/10 text-[#e6e3fb]"
-                  : "text-[#aba9bf] hover:text-[#e6e3fb]"
+                  ? "bg-[#09090b]/10 text-[#09090b]"
+                  : "text-[#71717a] hover:text-[#09090b]"
               }`}
             >
               {range}
@@ -93,7 +93,7 @@ export function RevenueChart() {
       {/* Chart */}
       <div className="h-72 w-full relative">
         {/* Y Axis Labels */}
-        <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-[#aba9bf] font-mono py-2">
+        <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-[#71717a] font-mono py-2">
           {yLabels.map((label) => (
             <span key={label}>{label}</span>
           ))}
@@ -102,7 +102,7 @@ export function RevenueChart() {
         {/* Grid Lines */}
         <div className="absolute left-12 right-0 top-0 h-full flex flex-col justify-between py-2">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="w-full h-px bg-[#474659]/10" />
+            <div key={i} className="w-full h-px bg-[#f4f4f5]/10" />
           ))}
         </div>
 
@@ -118,29 +118,29 @@ export function RevenueChart() {
             >
               <defs>
                 <linearGradient id="chart-gradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#53ddfc" stopOpacity="1" />
-                  <stop offset="100%" stopColor="#53ddfc" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#27272a" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#27272a" stopOpacity="0" />
                 </linearGradient>
               </defs>
               <path d={areaPath} fill="url(#chart-gradient)" opacity="0.3" />
               <path
                 d={linePath}
                 fill="none"
-                stroke="#53ddfc"
+                stroke="#27272a"
                 strokeWidth="3"
-                style={{ filter: "drop-shadow(0 0 8px #53ddfc)" }}
+                style={{ filter: "drop-shadow(0 0 8px #27272a)" }}
               />
             </svg>
           ) : (
-            <div className="flex items-center justify-center h-full text-sm text-[#aba9bf]">
-              <div className="w-5 h-5 border-2 border-[#53ddfc]/30 border-t-[#53ddfc] rounded-full animate-spin mr-3" />
+            <div className="flex items-center justify-center h-full text-sm text-[#71717a]">
+              <div className="w-5 h-5 border-2 border-[#e4e4e7] border-t-[#27272a] rounded-full animate-spin mr-3" />
               Loading chart data...
             </div>
           )}
         </div>
 
         {/* X Axis Labels */}
-        <div className="absolute left-12 right-0 bottom-0 flex justify-between text-xs text-[#aba9bf] font-mono">
+        <div className="absolute left-12 right-0 bottom-0 flex justify-between text-xs text-[#71717a] font-mono">
           {chartData.map((d) => (
             <span key={d.month}>{d.month}</span>
           ))}

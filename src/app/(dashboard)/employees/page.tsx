@@ -27,61 +27,60 @@ function EmployeeCard({ employee, sparklineBars }: { employee: any, sparklineBar
       initial={{ opacity: 0, y: 15 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-[#111124]/30 backdrop-blur-[32px] rounded-xl p-5 border border-[#474659]/15 flex flex-col group hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden"
-      style={{ boxShadow: '0 0 40px rgba(138, 76, 252, 0.05)' }}
+      className="glass-panel rounded-2xl p-6 border-border/50 flex flex-col group hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden shadow-sm hover:shadow-lg hover:shadow-primary/10"
     >
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full overflow-hidden border border-[#474659]/30 bg-[#23233b] flex items-center justify-center">
+      <div className="flex justify-between items-start mb-6">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-full overflow-hidden border border-border bg-primary/10 flex items-center justify-center shadow-inner">
             {employee.image ? (
               <img src={employee.image} alt={employee.name} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-xs font-bold text-[#bd9dff]">{employee.initials}</span>
+              <span className="text-sm font-extrabold text-primary font-heading tracking-tight">{employee.initials}</span>
             )}
           </div>
           <div>
-            <h3 className="font-heading text-base font-bold text-[#e6e3fb]">{employee.name}</h3>
-            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border
-              ${employee.role === "Senior Field Rep" ? "bg-[#bd9dff]/10 text-[#bd9dff] border-[#bd9dff]/20" : "bg-[#23233b] text-[#aba9bf] border-[#474659]/30"}
+            <h3 className="font-heading text-lg font-bold text-foreground">{employee.name}</h3>
+            <span className={`inline-flex items-center mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-sm
+              ${employee.role === "Senior Field Rep" ? "bg-primary/10 text-primary border-primary/20" : "bg-muted/50 text-muted-foreground border-border"}
             `}>
               {employee.role}
             </span>
           </div>
         </div>
-        <button className="text-[#aba9bf] hover:text-[#e6e3fb]">
+        <button className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-muted transition-colors">
           <MoreVertical className="w-5 h-5" />
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mb-4 flex-1">
+      <div className="grid grid-cols-2 gap-3 mb-6 flex-1">
         {[
           { label: "Visits", ...employee.visits },
           { label: "Leads", ...employee.leads },
           { label: "Sales", ...employee.sales },
           { label: "Revenue", ...employee.revenue, isPrimary: true },
         ].map(stat => (
-          <div key={stat.label} className="bg-[#111124]/50 rounded-lg p-3">
-            <p className="text-xs text-[#aba9bf] mb-1 font-body">{stat.label}</p>
-            <p className={`font-heading text-lg font-bold tracking-tight ${stat.isPrimary ? "text-[#bd9dff]" : "text-[#e6e3fb]"}`}>
+          <div key={stat.label} className="bg-muted/30 border border-border/50 rounded-xl p-4 shadow-sm group-hover:border-border transition-colors">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">{stat.label}</p>
+            <p className={`font-heading text-2xl font-extrabold tracking-tight ${stat.isPrimary ? "text-primary" : "text-foreground"}`}>
               {stat.value}
             </p>
-            <p className={`text-[10px] mt-1 flex items-center gap-0.5 ${stat.up ? "text-[#53ddfc]" : "text-[#ff6e84]"}`}>
+            <p className={`text-[10px] font-bold mt-1.5 flex items-center gap-1 ${stat.up ? "text-emerald-500" : "text-destructive"}`}>
               {stat.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />} {stat.trend}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="mt-auto border-t border-[#474659]/10 pt-3">
-        <div className="flex items-center justify-between text-xs text-[#aba9bf] mb-2">
+      <div className="mt-auto border-t border-border/50 pt-4">
+        <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
           <span>Performance Trend</span>
           <span className={employee.trendColor}>{employee.trendStatus}</span>
         </div>
-        <div className="w-full h-8 flex items-end gap-1">
+        <div className="w-full h-10 flex items-end gap-1.5">
           {sparklineBars.map((bar, i) => (
              <div 
                key={i} 
-               className={`w-1/6 rounded-t-sm ${bar.bg} ${bar.shadow ? `shadow-[0_0_8px_${bar.shadow}]` : ""}`}
+               className={`flex-1 rounded-t-sm transition-all duration-500 ${bar.bg} ${bar.shadow ? `shadow-[0_0_12px_${bar.shadow}]` : ""}`}
                style={{ height: bar.height }}
              />
           ))}
@@ -110,12 +109,12 @@ export default function EmployeesPage() {
           const s = 20 + (seed % 30);
           const rev = (s * 850);
           
-          let color = "bg-[#bd9dff]";
-          let shadow = "rgba(189,157,255,0.6)";
-          let tColor = "text-[#aba9bf]";
+          let color = "bg-primary";
+          let shadow = "var(--primary)";
+          let tColor = "text-muted-foreground";
           
-          if (index === 0) { color = "bg-[#53ddfc]"; shadow = "rgba(83,221,252,0.6)"; tColor = "text-[#53ddfc]";}
-          if (index === 1) { color = "bg-[#ff6daf]"; shadow = "rgba(255,109,175,0.6)"; tColor = "text-[#ff6daf]"; }
+          if (index === 0) { color = "bg-emerald-500"; shadow = "rgba(16,185,129,0.5)"; tColor = "text-emerald-500";}
+          if (index === 1) { color = "bg-amber-500"; shadow = "rgba(245,158,11,0.5)"; tColor = "text-amber-500"; }
 
           return {
             id: user.id,
@@ -123,15 +122,15 @@ export default function EmployeesPage() {
             role: user.role === 'admin' ? "Regional Director" : "Senior Field Rep",
             image: "",
             initials: user.name.split(" ").map((n: string) => n[0]).join("").substring(0,2).toUpperCase(),
-            visits: { value: v, trend: `+${(seed % 15) + 1}%`, up: (seed % 2 === 0) },
-            leads: { value: Math.floor(v * 0.7), trend: `+${(seed % 8) + 1}%`, up: true },
-            sales: { value: s, trend: `${(seed % 2 === 0 ? '+' : '-')}${(seed % 6) + 1}%`, up: (seed % 2 === 0) },
-            revenue: { value: `$${(rev/1000).toFixed(1)}k`, trend: `+${(seed % 20) + 1}%`, up: true },
+            visits: { value: new Intl.NumberFormat('en-US').format(v), trend: `+${(seed % 15) + 1}%`, up: (seed % 2 === 0) },
+            leads: { value: new Intl.NumberFormat('en-US').format(Math.floor(v * 0.7)), trend: `+${(seed % 8) + 1}%`, up: true },
+            sales: { value: new Intl.NumberFormat('en-US').format(s), trend: `${(seed % 2 === 0 ? '+' : '-')}${(seed % 6) + 1}%`, up: (seed % 2 === 0) },
+            revenue: { value: `$${new Intl.NumberFormat('en-US').format(rev/1000)}k`, trend: `+${(seed % 20) + 1}%`, up: true },
             trendStatus: index === 0 ? "Excellent" : index === 1 ? "Volatile" : "Stable",
             trendColor: tColor,
             territory: index % 2 === 0 ? "Northwest Region" : "Central District",
             convRate: `${((s / Math.floor(v * 0.7))*100).toFixed(1)}%`,
-            avgDeal: `$${(rev/s).toFixed(2)}`,
+            avgDeal: `$${new Intl.NumberFormat('en-US').format(rev/s)}`,
             totalRev: `$${new Intl.NumberFormat('en-US').format(rev)}`,
             statusColor: color,
             statusShadow: shadow,
@@ -148,19 +147,19 @@ export default function EmployeesPage() {
   // Just mimicking the static CSS sparkline styles from the HTML prototype
   const sparklineVariations = [
     [
-      { height: "33%", bg: "bg-[#bd9dff]/30" }, { height: "50%", bg: "bg-[#bd9dff]/40" },
-      { height: "40%", bg: "bg-[#bd9dff]/50" }, { height: "75%", bg: "bg-[#bd9dff]/70" },
-      { height: "85%", bg: "bg-[#bd9dff]/80" }, { height: "100%", bg: "bg-[#53ddfc]", shadow: "rgba(83,221,252,0.5)" }
+      { height: "33%", bg: "bg-emerald-500/30" }, { height: "50%", bg: "bg-emerald-500/40" },
+      { height: "40%", bg: "bg-emerald-500/50" }, { height: "75%", bg: "bg-emerald-500/70" },
+      { height: "85%", bg: "bg-emerald-500/80" }, { height: "100%", bg: "bg-emerald-500", shadow: "rgba(16,185,129,0.5)" }
     ],
     [
-      { height: "45%", bg: "bg-[#bd9dff]/30" }, { height: "40%", bg: "bg-[#bd9dff]/30" },
-      { height: "50%", bg: "bg-[#bd9dff]/40" }, { height: "48%", bg: "bg-[#bd9dff]/40" },
-      { height: "55%", bg: "bg-[#bd9dff]/50" }, { height: "60%", bg: "bg-[#bd9dff]/60" }
+      { height: "45%", bg: "bg-amber-500/30" }, { height: "40%", bg: "bg-amber-500/30" },
+      { height: "50%", bg: "bg-amber-500/40" }, { height: "48%", bg: "bg-amber-500/40" },
+      { height: "55%", bg: "bg-amber-500/50" }, { height: "60%", bg: "bg-amber-500/60" }
     ],
     [
-      { height: "30%", bg: "bg-[#bd9dff]/20" }, { height: "60%", bg: "bg-[#bd9dff]/40" },
-      { height: "90%", bg: "bg-[#bd9dff]/70" }, { height: "40%", bg: "bg-[#bd9dff]/30" },
-      { height: "70%", bg: "bg-[#bd9dff]/50" }, { height: "45%", bg: "bg-[#ff6daf]", shadow: "rgba(255,109,175,0.5)" }
+      { height: "30%", bg: "bg-primary/20" }, { height: "60%", bg: "bg-primary/40" },
+      { height: "90%", bg: "bg-primary/70" }, { height: "40%", bg: "bg-primary/30" },
+      { height: "70%", bg: "bg-primary/50" }, { height: "45%", bg: "bg-primary", shadow: "rgba(99,102,241,0.5)" }
     ]
   ];
 
@@ -181,30 +180,19 @@ export default function EmployeesPage() {
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{__html: `
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(32px);
-            border: 1px solid rgba(71, 70, 89, 0.15);
-        }
-        .ambient-shadow {
-            box-shadow: 0 0 60px rgba(138, 76, 252, 0.05); 
-        }
-      `}} />
-
       {/* Header & Filters */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-[#e6e3fb] tracking-tight mb-1">Employee Performance</h1>
-          <p className="text-[#aba9bf] text-sm font-body">Real-time metrics and historical KPI data for field staff.</p>
+          <h1 className="font-heading text-4xl font-extrabold text-foreground tracking-tight mb-2">Employee Performance</h1>
+          <p className="text-muted-foreground text-base font-medium">Real-time metrics and historical KPI data for field staff.</p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <div className="glass-panel rounded-lg flex items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-white/10 transition-colors">
-            <CalendarDays className="w-4 h-4 text-[#aba9bf] mr-2" />
-            <span className="text-[#e6e3fb] font-medium">Last 30 Days</span>
-            <ChevronDown className="w-4 h-4 text-[#aba9bf] ml-2" />
+          <div className="glass-panel border-border/50 rounded-xl flex items-center px-4 py-2.5 text-sm cursor-pointer hover:bg-muted transition-colors shadow-sm">
+            <CalendarDays className="w-4 h-4 text-muted-foreground mr-2" />
+            <span className="text-foreground font-bold">Last 30 Days</span>
+            <ChevronDown className="w-4 h-4 text-muted-foreground ml-2" />
           </div>
-          <button onClick={handleExport} className="bg-gradient-to-br from-[#bd9dff] to-[#53ddfc] text-black font-medium text-sm px-4 py-1.5 rounded-lg hover:shadow-[0_0_15px_rgba(189,157,255,0.4)] transition-all flex items-center gap-2">
+          <button onClick={handleExport} className="bg-primary text-primary-foreground font-bold text-sm px-5 py-2.5 rounded-xl hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center gap-2 active:scale-95">
             <Download className="w-4 h-4" />
             Export Data
           </button>
@@ -219,55 +207,55 @@ export default function EmployeesPage() {
       </div>
 
       {/* Detailed KPI Table */}
-      <div className="bg-[#111124]/30 backdrop-blur-[32px] rounded-xl border border-[#474659]/15 overflow-hidden ambient-shadow">
-        <div className="px-6 py-4 border-b border-[#474659]/15 flex justify-between items-center bg-[#111124]/30">
-          <h2 className="font-heading text-lg font-bold text-[#e6e3fb]">Comprehensive KPI Directory</h2>
-          <button onClick={() => router.push('/reports')} className="text-sm text-[#bd9dff] hover:text-[#a67aff] transition-colors flex items-center gap-1 font-medium group">
+      <div className="glass-panel rounded-2xl border-border/50 overflow-hidden shadow-sm">
+        <div className="px-6 py-5 border-b border-border/50 flex justify-between items-center bg-muted/20">
+          <h2 className="font-heading text-xl font-bold text-foreground">Comprehensive KPI Directory</h2>
+          <button onClick={() => router.push('/reports')} className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 font-bold group">
             View Reports <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
         
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
-              <tr className="text-xs text-[#aba9bf] font-body uppercase tracking-wider bg-[#000000]/50">
-                <th className="px-6 py-4 font-medium flex items-center gap-1 cursor-pointer hover:text-[#e6e3fb]">
+              <tr className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest bg-muted/30">
+                <th className="px-6 py-5 flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors">
                   Employee <ChevronDown className="w-3.5 h-3.5" />
                 </th>
-                <th className="px-6 py-4 font-medium cursor-pointer hover:text-[#e6e3fb]">Territory</th>
-                <th className="px-6 py-4 font-medium cursor-pointer hover:text-[#e6e3fb] text-right">Total Visits</th>
-                <th className="px-6 py-4 font-medium cursor-pointer hover:text-[#e6e3fb] text-right">Conv. Rate</th>
-                <th className="px-6 py-4 font-medium cursor-pointer hover:text-[#e6e3fb] text-right">Avg Deal Size</th>
-                <th className="px-6 py-4 font-medium cursor-pointer hover:text-[#e6e3fb] text-right">Total Revenue</th>
-                <th className="px-6 py-4 font-medium text-center">Status</th>
+                <th className="px-6 py-5 cursor-pointer hover:text-foreground transition-colors">Territory</th>
+                <th className="px-6 py-5 cursor-pointer hover:text-foreground transition-colors text-right">Total Visits</th>
+                <th className="px-6 py-5 cursor-pointer hover:text-foreground transition-colors text-right">Conv. Rate</th>
+                <th className="px-6 py-5 cursor-pointer hover:text-foreground transition-colors text-right">Avg Deal Size</th>
+                <th className="px-6 py-5 cursor-pointer hover:text-foreground transition-colors text-right">Total Revenue</th>
+                <th className="px-6 py-5 text-center">Status</th>
               </tr>
             </thead>
-            <tbody className="text-sm divide-y divide-[#474659]/10">
+            <tbody className="text-sm divide-y divide-border/30">
               {currentEmployees.map((emp) => (
-                <tr key={emp.id} className="hover:bg-[#23233b]/30 transition-colors group">
+                <tr key={emp.id} className="hover:bg-muted/30 transition-colors group">
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full overflow-hidden bg-[#23233b] flex items-center justify-center border border-[#474659]/30 text-xs font-bold text-[#bd9dff]">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-primary/10 flex items-center justify-center border border-border text-xs font-extrabold font-heading text-primary shadow-sm">
                         {emp.image ? (
                            <img src={emp.image} alt={emp.name} className="w-full h-full object-cover" />
                         ) : (
                            emp.initials
                         )}
                       </div>
-                      <span className="font-medium text-[#e6e3fb]">{emp.name}</span>
+                      <span className="font-bold text-foreground group-hover:text-primary transition-colors">{emp.name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-[#aba9bf]">{emp.territory}</td>
-                  <td className="px-6 py-4 text-right">{emp.visits.value}</td>
-                  <td className={`px-6 py-4 text-right ${emp.visits.up ? "text-[#53ddfc]" : "text-[#ff6e84]"}`}>
+                  <td className="px-6 py-4 text-muted-foreground font-medium">{emp.territory}</td>
+                  <td className="px-6 py-4 text-right font-mono font-bold text-foreground">{emp.visits.value}</td>
+                  <td className={`px-6 py-4 text-right font-mono font-bold ${emp.visits.up ? "text-emerald-500" : "text-destructive"}`}>
                     {emp.convRate}
                   </td>
-                  <td className="px-6 py-4 text-right">{emp.avgDeal}</td>
-                  <td className="px-6 py-4 text-right font-medium text-[#bd9dff]">{emp.totalRev}</td>
+                  <td className="px-6 py-4 text-right font-mono font-bold text-foreground">{emp.avgDeal}</td>
+                  <td className="px-6 py-4 text-right font-mono font-extrabold text-foreground">{emp.totalRev}</td>
                   <td className="px-6 py-4 text-center">
                     <span 
-                      className={`inline-block w-2 h-2 rounded-full ${emp.statusColor}`}
-                      style={{ boxShadow: `0 0 8px ${emp.statusShadow}` }}
+                      className={`inline-block w-2.5 h-2.5 rounded-full ${emp.statusColor}`}
+                      style={{ boxShadow: `0 0 10px ${emp.statusShadow}` }}
                     />
                   </td>
                 </tr>
@@ -276,12 +264,12 @@ export default function EmployeesPage() {
           </table>
         </div>
 
-        <div className="px-6 py-3 border-t border-[#474659]/15 flex flex-col sm:flex-row justify-between items-center text-xs text-[#aba9bf] bg-[#000000]/30 gap-4">
-          <span>Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, tableEmployees.length)} of {tableEmployees.length} Employees</span>
+        <div className="px-6 py-4 border-t border-border/50 flex flex-col sm:flex-row justify-between items-center text-xs font-bold text-muted-foreground bg-muted/20 gap-4">
+          <span>Showing <span className="font-mono text-foreground">{Math.min(1 + (currentPage - 1) * itemsPerPage, tableEmployees.length)}</span>-<span className="font-mono text-foreground">{Math.min(currentPage * itemsPerPage, tableEmployees.length)}</span> of <span className="font-mono text-foreground">{tableEmployees.length}</span> Employees</span>
           <div className="flex gap-2">
             <button 
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))} 
-              className="w-8 h-8 rounded flex items-center justify-center hover:bg-[#23233b] transition-colors disabled:opacity-50" 
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 disabled:hover:bg-transparent" 
               disabled={currentPage === 1}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -290,10 +278,10 @@ export default function EmployeesPage() {
               <button 
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`w-8 h-8 rounded flex items-center justify-center transition-colors ${
+                className={`w-8 h-8 rounded-lg flex items-center justify-center font-mono transition-colors ${
                   currentPage === i + 1 
-                    ? "bg-[#bd9dff]/20 text-[#bd9dff] font-medium border border-[#bd9dff]/30" 
-                    : "hover:bg-[#23233b]"
+                    ? "bg-primary text-primary-foreground shadow-sm" 
+                    : "hover:bg-muted hover:text-foreground"
                 }`}
               >
                 {i + 1}
@@ -301,7 +289,7 @@ export default function EmployeesPage() {
             ))}
             <button 
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} 
-              className="w-8 h-8 rounded flex items-center justify-center hover:bg-[#23233b] transition-colors disabled:opacity-50"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
               disabled={currentPage === totalPages || totalPages === 0}
             >
               <ChevronRight className="w-4 h-4" />

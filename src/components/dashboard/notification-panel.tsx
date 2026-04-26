@@ -20,7 +20,7 @@ const typeConfig: Record<
   string,
   { icon: typeof Info; color: string; bg: string }
 > = {
-  info: { icon: Info, color: "text-[#53ddfc]", bg: "bg-[#53ddfc]/10" },
+  info: { icon: Info, color: "text-[#27272a]", bg: "bg-[#f4f4f5]/10" },
   success: { icon: CheckCircle2, color: "text-[#4ade80]", bg: "bg-[#4ade80]/10" },
   warning: { icon: AlertTriangle, color: "text-[#fbbf24]", bg: "bg-[#fbbf24]/10" },
   alert: { icon: AlertCircle, color: "text-[#ff6e84]", bg: "bg-[#ff6e84]/10" },
@@ -62,7 +62,7 @@ function NotificationItem({
   return (
     <button
       onClick={handleClick}
-      className={`w-full text-left p-4 flex gap-3 transition-all duration-200 hover:bg-white/[0.04] border-b border-white/5 last:border-0 ${
+      className={`w-full text-left p-4 flex gap-3 transition-all duration-200 hover:bg-[#f4f4f5] border-b border-[#e4e4e7] last:border-0 ${
         notification.is_read ? "opacity-60" : ""
       }`}
     >
@@ -73,24 +73,24 @@ function NotificationItem({
         <div className="flex items-start justify-between gap-2">
           <p
             className={`text-sm font-medium truncate ${
-              notification.is_read ? "text-[#aba9bf]" : "text-[#e6e3fb]"
+              notification.is_read ? "text-[#71717a]" : "text-[#09090b]"
             }`}
           >
             {notification.title}
           </p>
           {!notification.is_read && (
-            <div className="w-2 h-2 rounded-full bg-[#53ddfc] shrink-0 mt-1.5" />
+            <div className="w-2 h-2 rounded-full bg-[#09090b] shrink-0 mt-1.5" />
           )}
         </div>
-        <p className="text-xs text-[#aba9bf] mt-0.5 line-clamp-2">
+        <p className="text-xs text-[#71717a] mt-0.5 line-clamp-2">
           {notification.message}
         </p>
         <div className="flex items-center gap-2 mt-1.5">
-          <span className="text-[10px] text-[#aba9bf]/70 font-mono">
+          <span className="text-[10px] text-[#71717a]/70 font-mono">
             {timeAgo(notification.created_at)}
           </span>
           {notification.link && (
-            <ExternalLink className="w-3 h-3 text-[#aba9bf]/50" />
+            <ExternalLink className="w-3 h-3 text-[#71717a]/50" />
           )}
         </div>
       </div>
@@ -123,11 +123,11 @@ export function NotificationPanel() {
       {/* Bell Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all"
+        className="relative p-2 text-[#71717a] hover:text-[#09090b] hover:bg-[#f4f4f5] rounded-full transition-all"
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-bold text-white bg-[#ff6daf] rounded-full shadow-[0_0_8px_rgba(255,109,175,0.6)] animate-pulse">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-bold text-white bg-[#09090b] rounded-full animate-pulse">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
@@ -141,16 +141,16 @@ export function NotificationPanel() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.96 }}
             transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-            className="absolute right-0 top-full mt-2 w-[380px] max-h-[480px] rounded-xl border border-[#474659]/30 bg-[#18182b]/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(189,157,255,0.08)] overflow-hidden z-50"
+            className="absolute right-0 top-full mt-2 w-[380px] max-h-[480px] rounded-xl border border-[#e4e4e7] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.1)] overflow-hidden z-50"
           >
             {/* Header */}
-            <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between bg-[#111124]/60">
+            <div className="px-4 py-3 border-b border-[#e4e4e7] flex items-center justify-between bg-[#f4f4f5]">
               <div className="flex items-center gap-2">
-                <h3 className="font-heading text-sm font-bold text-[#e6e3fb]">
+                <h3 className="font-heading text-sm font-bold text-[#09090b]">
                   Notifications
                 </h3>
                 {unreadCount > 0 && (
-                  <span className="text-[10px] font-bold text-[#53ddfc] bg-[#53ddfc]/10 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold text-[#09090b] bg-[#e4e4e7] px-2 py-0.5 rounded-full">
                     {unreadCount} new
                   </span>
                 )}
@@ -158,7 +158,7 @@ export function NotificationPanel() {
               {unreadCount > 0 && (
                 <button
                   onClick={markAllRead}
-                  className="flex items-center gap-1 text-[10px] font-medium text-[#bd9dff] hover:text-[#e6e3fb] transition-colors uppercase tracking-wider"
+                  className="flex items-center gap-1 text-[10px] font-medium text-[#71717a] hover:text-[#09090b] transition-colors uppercase tracking-wider"
                 >
                   <CheckCheck className="w-3.5 h-3.5" />
                   Mark all read
@@ -170,13 +170,13 @@ export function NotificationPanel() {
             <div className="overflow-y-auto max-h-[400px] custom-scrollbar">
               {notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="p-4 rounded-full bg-[#23233b] mb-4">
-                    <Inbox className="w-8 h-8 text-[#aba9bf]/50" />
+                  <div className="p-4 rounded-full bg-[#f4f4f5] mb-4">
+                    <Inbox className="w-8 h-8 text-[#71717a]/50" />
                   </div>
-                  <p className="text-sm text-[#aba9bf] font-medium">
+                  <p className="text-sm text-[#71717a] font-medium">
                     All caught up!
                   </p>
-                  <p className="text-xs text-[#aba9bf]/60 mt-1">
+                  <p className="text-xs text-[#71717a]/60 mt-1">
                     No new notifications
                   </p>
                 </div>

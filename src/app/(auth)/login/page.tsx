@@ -25,17 +25,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center bg-[#080818]">
-      {/* Ambient Background Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[100px] pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(138, 76, 252, 0.4) 0%, rgba(12, 12, 29, 0) 70%)" }}
-      />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] rounded-full blur-[120px] pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(64, 206, 237, 0.3) 0%, rgba(12, 12, 29, 0) 70%)" }}
-      />
-      <div className="absolute top-[40%] right-[10%] w-[400px] h-[400px] rounded-full blur-[80px] pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(250, 83, 164, 0.3) 0%, rgba(12, 12, 29, 0) 70%)" }}
-      />
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center bg-background">
+      {/* Background Liquid Light Orbs */}
+      <div className="fixed top-0 right-[20%] w-[500px] h-[500px] rounded-full pointer-events-none z-0 blur-[80px] opacity-30 bg-primary/20 text-white will-change-transform transform-gpu" />
+      <div className="fixed bottom-0 left-[10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0 blur-[80px] opacity-20 bg-gradient-to-tr from-accent/20 to-primary/10 will-change-transform transform-gpu" />
 
       {/* Login Container */}
       <motion.main
@@ -44,23 +37,23 @@ export default function LoginPage() {
         transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
         className="relative z-10 w-full max-w-md px-6"
       >
-        {/* Glassmorphism Card */}
-        <div className="bg-white/[0.03] backdrop-blur-[40px] border border-[#474659]/20 rounded-[2rem] p-10 shadow-[0_0_60px_rgba(138,76,252,0.08)]">
+        {/* Card */}
+        <div className="glass-panel border-border/50 rounded-[2.5rem] p-10 shadow-2xl">
           {/* Header */}
           <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/[0.05] border border-[#474659]/15 mb-6 shadow-[0_0_30px_rgba(189,157,255,0.15)]">
-              <Waypoints className="w-8 h-8 text-[#bd9dff]" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-6 shadow-lg shadow-primary/30">
+              <Waypoints className="w-8 h-8 text-primary-foreground" />
             </div>
-            <h1 className="font-heading font-bold text-3xl text-[#e6e3fb] tracking-tight mb-2">
+            <h1 className="font-heading font-extrabold text-3xl text-foreground tracking-tight mb-2 drop-shadow-sm">
               MarketPro
             </h1>
-            <p className="text-sm text-[#aba9bf]">Admin Portal</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] font-bold">Admin Portal</p>
           </div>
 
           {/* Login Form */}
           {errorStatus && (
-            <div className="mb-6 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-center">
-               <p className="text-xs text-red-400">{errorStatus}</p>
+            <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-center">
+               <p className="text-xs text-destructive font-bold">{errorStatus}</p>
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -68,13 +61,13 @@ export default function LoginPage() {
             <div className="space-y-2">
               <label
                 htmlFor="email"
-                className="text-xs font-medium text-[#aba9bf] uppercase tracking-wider"
+                className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1"
               >
                 Work Email
               </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="w-4 h-4 text-[#aba9bf] group-focus-within:text-[#bd9dff] transition-colors" />
+                  <Mail className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 </div>
                 <input
                   id="email"
@@ -82,7 +75,7 @@ export default function LoginPage() {
                   type="email"
                   required
                   placeholder="admin@marketpro.com"
-                  className="w-full bg-[#111124] border border-[#474659]/30 rounded-xl py-3.5 pl-11 pr-4 text-sm text-[#e6e3fb] placeholder-[#aba9bf]/50 focus:outline-none focus:border-[#53ddfc] focus:ring-1 focus:ring-[#53ddfc]/50 focus:shadow-[0_0_15px_rgba(83,221,252,0.2)] transition-all"
+                  className="w-full bg-white/50 border border-border/50 rounded-xl py-3.5 pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -92,21 +85,21 @@ export default function LoginPage() {
               <div className="flex justify-between items-center">
                 <label
                   htmlFor="password"
-                  className="text-xs font-medium text-[#aba9bf] uppercase tracking-wider"
+                  className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1"
                 >
                   Password
                 </label>
                 <button
                   type="button"
                   onClick={(e) => { e.preventDefault(); alert("Please contact IT support to reset your password."); }}
-                  className="text-xs text-[#bd9dff] hover:text-[#ff6daf] transition-colors"
+                  className="text-[10px] text-primary hover:text-primary/80 transition-colors font-bold uppercase tracking-wider"
                 >
                   Recover Access
                 </button>
               </div>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="w-4 h-4 text-[#aba9bf] group-focus-within:text-[#bd9dff] transition-colors" />
+                  <Lock className="w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 </div>
                 <input
                   id="password"
@@ -114,12 +107,12 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder="••••••••"
-                  className="w-full bg-[#111124] border border-[#474659]/30 rounded-xl py-3.5 pl-11 pr-11 text-sm text-[#e6e3fb] placeholder-[#aba9bf]/50 focus:outline-none focus:border-[#53ddfc] focus:ring-1 focus:ring-[#53ddfc]/50 focus:shadow-[0_0_15px_rgba(83,221,252,0.2)] transition-all"
+                  className="w-full bg-white/50 border border-border/50 rounded-xl py-3.5 pl-11 pr-11 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all backdrop-blur-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-[#aba9bf] hover:text-[#e6e3fb]"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-muted-foreground hover:text-primary transition-colors"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -132,16 +125,16 @@ export default function LoginPage() {
 
             {/* Remember & SSO */}
             <div className="flex items-center justify-between pt-2">
-              <label className="flex items-center space-x-3 cursor-pointer">
+              <label className="flex items-center space-x-3 cursor-pointer group">
                 <input
                   type="checkbox"
-                  className="h-5 w-5 rounded border border-[#474659]/40 bg-[#111124] text-[#bd9dff] focus:ring-[#bd9dff]/30 focus:ring-offset-0"
+                  className="h-5 w-5 rounded-lg border border-border/50 bg-white/50 text-primary focus:ring-primary/20 focus:ring-offset-0 transition-all cursor-pointer"
                 />
-                <span className="text-sm text-[#aba9bf]">Stay signed in</span>
+                <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors font-medium">Stay signed in</span>
               </label>
-              <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#53ddfc]/10 border border-[#53ddfc]/20">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#53ddfc] animate-pulse" />
-                <span className="text-[10px] text-[#53ddfc] font-medium uppercase tracking-wider">
+              <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                <span className="text-[10px] text-primary font-bold uppercase tracking-wider">
                   SSO Active
                 </span>
               </div>
@@ -152,39 +145,37 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="relative w-full overflow-hidden rounded-xl bg-gradient-to-br from-[#bd9dff] via-[#ff6daf] to-[#53ddfc] p-[1px] group transition-all duration-300 hover:shadow-[0_0_25px_rgba(189,157,255,0.4)]"
+                className="group w-full rounded-2xl bg-primary py-4 px-6 flex items-center justify-center space-x-3 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-50 relative overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-[#bd9dff] via-[#ff6daf] to-[#53ddfc] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="relative w-full bg-[#0c0c1d]/80 backdrop-blur-md rounded-[11px] py-3.5 px-6 flex items-center justify-center space-x-2 group-hover:bg-transparent transition-colors duration-300">
-                  <span className="font-heading font-bold text-sm text-[#e6e3fb] group-hover:text-[#0c0c1d] transition-colors duration-300">
-                    {isLoading ? "Signing in..." : "Sign In"}
-                  </span>
-                  {!isLoading && (
-                    <ArrowRight className="w-4 h-4 text-[#e6e3fb] group-hover:text-[#0c0c1d] transition-colors duration-300" />
-                  )}
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                <span className="font-heading font-extrabold text-sm text-primary-foreground relative z-10">
+                  {isLoading ? "Validating Session..." : "Sign In to Portal"}
+                </span>
+                {!isLoading && (
+                  <ArrowRight className="w-4 h-4 text-primary-foreground group-hover:translate-x-1 transition-transform relative z-10" />
+                )}
               </button>
             </div>
           </form>
 
           {/* Footer */}
-          <div className="mt-8 text-center border-t border-[#474659]/10 pt-6">
-            <p className="text-xs text-[#aba9bf]">
+          <div className="mt-8 text-center border-t border-border/50 pt-6">
+            <p className="text-xs text-muted-foreground font-medium">
               Require assistance?{" "}
               <button
                 type="button"
                 onClick={(e) => { e.preventDefault(); alert("IT Support: it@marketpro.com"); }}
-                className="text-[#bd9dff] hover:text-[#b28cff] transition-colors"
+                className="text-primary hover:text-primary/80 transition-colors font-bold"
               >
                 Contact IT Support
               </button>
             </p>
             <div className="mt-4 flex items-center justify-center space-x-4 opacity-50">
-              <div className="h-4 border-r border-[#474659]" />
-              <span className="text-[10px] text-[#aba9bf] tracking-widest uppercase">
+              <div className="h-px flex-1 bg-border/50" />
+              <span className="text-[10px] text-muted-foreground tracking-[0.3em] font-bold uppercase whitespace-nowrap">
                 Secure Env v2.4
               </span>
-              <div className="h-4 border-r border-[#474659]" />
+              <div className="h-px flex-1 bg-border/50" />
             </div>
           </div>
         </div>
